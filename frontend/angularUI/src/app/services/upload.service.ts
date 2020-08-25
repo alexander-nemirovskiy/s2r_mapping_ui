@@ -8,7 +8,7 @@ import {
 import { Observable, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-const uploadURL = environment.API_Endpoint + '/upload'
+const uploadURL = environment.API_Endpoint + '/uploads'
 
 @Injectable({
     providedIn: 'root'
