@@ -2,3 +2,4 @@ fastapi
 starlette
 uvicorn
 pandas
+python-multipart

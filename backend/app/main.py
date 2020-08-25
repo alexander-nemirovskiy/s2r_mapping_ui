@@ -10,7 +10,7 @@ app = FastAPI(title=PROJECT_NAME,
               version='0.0.1',
               description='First draft of shift to rail mapping software')
 
-
+# Todo change for production
 if ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["*"]
 

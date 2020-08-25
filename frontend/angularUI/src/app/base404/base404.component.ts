@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-base404',
+  selector: 'base404',
   templateUrl: './base404.component.html',
   styleUrls: ['./base404.component.scss']
 })

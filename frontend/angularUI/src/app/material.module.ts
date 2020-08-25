@@ -11,35 +11,30 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
+const defs = [
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
+    MatTabsModule,
+    MatCardModule,
+    MatProgressBarModule,
+]
 
 @NgModule({
     imports: [
-        MatTableModule,
-        MatProgressSpinnerModule,
-        MatButtonModule,
-        MatIconModule,
-        MatDialogModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatTabsModule,
-        MatCardModule,
+        [...defs]
     ],
     exports: [
-        MatTableModule,
-        MatProgressSpinnerModule,
-        MatButtonModule,
-        MatIconModule,
-        MatDialogModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatToolbarModule,
-        MatSidenavModule,
-        MatListModule,
-        MatTabsModule,
-        MatCardModule,
+        [...defs]
     ]
 })
 export class MaterialModule { }
