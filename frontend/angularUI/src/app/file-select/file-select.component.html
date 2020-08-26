@@ -1,0 +1,34 @@
+<mat-horizontal-stepper #stepper (selectionChange)="selectionChange($event)">
+    <mat-step [stepControl]="optionalFormGroup" optional>
+        <ng-template matStepLabel>Upload a file</ng-template>
+        <p>Upload a file to the server</p>
+        <div>
+            <file-upload></file-upload>
+            <button mat-button matStepperNext>Next</button>
+        </div>
+    </mat-step>
+    <mat-step #file_select [stepControl]="firstFormGroup" errorMessage="A file is required.">
+        <form [formGroup]="firstFormGroup">
+            <ng-template matStepLabel>Select a file</ng-template>
+            <mat-label>Please select a file to map</mat-label>
+            <mat-radio-group class="flex-container column"
+                [(ngModel)]="selected_file" formControlName="firstCtrl" required>
+                <mat-radio-button *ngFor="let file of files$ | async" [value]="file">
+                    {{file}}
+                </mat-radio-button>
+            </mat-radio-group>
+            <div>
+                <button mat-button matStepperNext>Next</button>
+            </div>
+        </form>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Generate mapping</ng-template>
+        <p>Use selected file to start the mapping process</p>
+        <div>
+            <button mat-raised-button (click)="startMapping()">Create map</button>
+            <button mat-button (click)="stepper.reset()">Reset</button>
+        </div>
+    </mat-step>
+</mat-horizontal-stepper>
+    

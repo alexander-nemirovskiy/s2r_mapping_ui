@@ -4,7 +4,7 @@ from typing import List
 from fastapi import APIRouter, UploadFile, File
 from starlette.responses import FileResponse
 
-from app.utils.uploadfile_management import save_upload_file
+from ....utils.file_management import save_upload_file, retrieve_mapping_files
 
 router = APIRouter()
 
@@ -18,9 +18,7 @@ async def upload_file(file: UploadFile = File(...)):
 
 @router.get("/files")
 async def get_filenames():
-    files: List[str] = []
-    # TODO stub
-    return files
+    return retrieve_mapping_files()
 
 
 @router.get("/files/{filename}")

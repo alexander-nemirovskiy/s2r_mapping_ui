@@ -12,6 +12,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatRadioModule } from '@angular/material/radio';
 
 const defs = [
     MatTableModule,
@@ -27,6 +29,8 @@ const defs = [
     MatTabsModule,
     MatCardModule,
     MatProgressBarModule,
+    MatStepperModule,
+    MatRadioModule,
 ]
 
 @NgModule({

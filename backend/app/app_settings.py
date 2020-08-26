@@ -5,3 +5,5 @@ ALLOWED_HOSTS = [
     'https://127.0.0.1',
     'http://127.0.0.1:4200'
 ]
+MAPPING_OUTPUT_FOLDER = 'output'
+MAPPING_UPLOAD_FOLDER = 'uploads'
