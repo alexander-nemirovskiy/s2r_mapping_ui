@@ -1,3 +1,40 @@
 :host {
     flex: 1 1 auto;
+    padding: 3vh 0;
+
+    & > div {
+        flex-wrap: wrap;
+        background-color: white;
+
+        > div {
+            flex: 1 1 100vw;
+            
+            > *[class^="mapping-"]{
+                padding-top: 2vh;
+                padding-left: 2vw;
+
+                &:first-child {
+                    flex: 2 1 25vw;
+                    padding-right: 2vw;
+                }
+                
+                &:last-child {
+                    flex: 2 1 55vw;
+
+                    mat-radio-button {
+                        flex: 1 1 auto;
+                        padding: 1vh 0;
+                    }
+                }
+            }
+
+            &:last-child {
+                align-self: center;
+                justify-content: flex-end;
+        
+                padding: 0 2vw 2vh 0; 
+            }
+        }
+    }
+
 }

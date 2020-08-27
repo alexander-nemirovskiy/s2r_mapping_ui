@@ -1,1 +1,32 @@
-<p>mapping-selector works!</p>
+<div class="flex-container row mat-elevation-z2">
+    <div class="flex-container row">
+        <div class="mapping-source">source term</div>
+        <mat-divider [vertical]="true"></mat-divider>
+        <form [formGroup]="selector_form" class="mapping-result">
+            <mat-radio-group class="flex-container column" formControlName="mapping_options" (change)="onRadioChange($event)">
+                <mat-radio-button *ngFor="let term of temp_options" [value]="term.name">
+                    {{term.name}}
+                </mat-radio-button>
+                <mat-radio-button value="other" name="custom_entry">
+                    <mat-form-field>
+                      <input matInput placeholder="Other" 
+                      (change)="mappingOption($event)"
+                      >
+                    </mat-form-field>
+                </mat-radio-button>
+            </mat-radio-group>
+        </form>
+    </div>
+    <div class="flex-container row">
+        <button mat-raised-button (click)="confirm()" [disabled]="isValid()">Confirm</button>
+    </div>
+</div>
+
+
+<!-- <mat-radio-group  class="flex-container column" name="mapping_option">
+    <mat-radio-button value="other" name="option_entry">
+        <mat-form-field>
+          <input matInput placeholder="Other" [formControl]="custom_option">
+        </mat-form-field>
+      </mat-radio-button>
+</mat-radio-group> -->
