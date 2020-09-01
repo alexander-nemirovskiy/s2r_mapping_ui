@@ -1,0 +1,20 @@
+<root>
+  <facet id="jpt.jaxb">
+    <node name="libprov">
+      <attribute name="provider-id" value="jaxb-jre-library-provider"/>
+    </node>
+    <node name="platform">
+      <attribute name="platform-id" value="generic_2_2"/>
+    </node>
+    <node name="schemas">
+      <node name="schema-1">
+        <attribute name="location" value="platform:/resource/JavaFromXsd/src/com/example/jaxb/schema/employeerequest.xsd"/>
+        <attribute name="namespace" value=""/>
+      </node>
+      <node name="schema-2">
+        <attribute name="location" value="platform:/resource/JavaFromXsd/src/com/example/jaxb/schema/gtfs.xsd"/>
+        <attribute name="namespace" value="http://gtfs.bigbluebus.com/gtfs.xsd"/>
+      </node>
+    </node>
+  </facet>
+</root>

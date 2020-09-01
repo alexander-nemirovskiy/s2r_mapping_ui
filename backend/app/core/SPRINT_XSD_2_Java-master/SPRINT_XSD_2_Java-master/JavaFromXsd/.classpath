@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="G:/OneDrive - Politecnico di Milano/DEIB/SPRINT/Alireza/xsdJava/workspace1/JavaFromXsd/lib/com.sun.tools.xjc_2.2.0.jar"/>
+	<classpathentry kind="lib" path="G:/OneDrive - Politecnico di Milano/DEIB/SPRINT/Alireza/xsdJava/workspace1/JavaFromXsd/lib/com.sun.xml.bind_2.2.0.v201004141950.jar"/>
+	<classpathentry kind="lib" path="G:/OneDrive - Politecnico di Milano/DEIB/SPRINT/Alireza/xsdJava/workspace1/JavaFromXsd/lib/javax.xml.bind_2.2.0.v201005080402.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
