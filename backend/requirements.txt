@@ -3,3 +3,7 @@ starlette
 uvicorn
 pandas
 python-multipart
+
+gensim
+rdflib
+owlready2
