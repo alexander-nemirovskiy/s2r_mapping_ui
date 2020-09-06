@@ -18,15 +18,7 @@
         </form>
     </div>
     <div class="flex-container row">
+        <button mat-button (click)="confirm()">Delete</button>
         <button mat-raised-button (click)="confirm()" [disabled]="isValid()">Confirm</button>
     </div>
 </div>
-
-
-<!-- <mat-radio-group  class="flex-container column" name="mapping_option">
-    <mat-radio-button value="other" name="option_entry">
-        <mat-form-field>
-          <input matInput placeholder="Other" [formControl]="custom_option">
-        </mat-form-field>
-      </mat-radio-button>
-</mat-radio-group> -->

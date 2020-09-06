@@ -209,7 +209,7 @@ dmypy.json
 .idea/**/dbnavigator.xml
 
 ### VisualStudioCode ###
-.vscode/*
+*/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json

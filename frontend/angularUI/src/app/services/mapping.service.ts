@@ -1,12 +1,12 @@
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { LoggerService } from './logger.service';
 import { environment } from './../../environments/environment';
 
-const filesURL = environment.API_Endpoint + '/files'
+const mappingURL = environment.API_Endpoint + '/mapping';
 
 @Injectable({
   providedIn: 'root'
@@ -15,8 +15,8 @@ export class MappingService {
 
     constructor(private http: HttpClient, private logger: LoggerService) {}
 
-    getFiles(): Observable<string[]> {
-        return this.http.get<string[]>(filesURL)
+    startMapping(): Observable<JSON> {
+        return this.http.get<JSON>(mappingURL)
             .pipe(
                 tap(() => this.logger.log('fetched files from server')),
                 catchError( err => {
@@ -24,7 +24,7 @@ export class MappingService {
                     const message = 'Sorry, GET files failed!';
                     return throwError(message);
                 }),
-                map((data: string[]) => data)
+                // map((data: string[]) => data)
             );
     }
 }

@@ -5,6 +5,7 @@ from starlette.status import HTTP_400_BAD_REQUEST
 
 class ErrorCode:
     GENERIC = "GENERIC_ERROR"
+    MISSING_PARAMS = "MISSING_REQUIRED_PARAMETERS"
 
 
 class API_Exception(Exception):

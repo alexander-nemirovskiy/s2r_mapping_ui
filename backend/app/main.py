@@ -1,9 +1,15 @@
+import logging
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from .app_settings import ALLOWED_HOSTS, API_V1_STR, PROJECT_NAME
 from .api.api_v1.api import router as api_router
 from .core.commons import API_Exception, http_error_handler
+
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s %(thread)s %(funcName)s %(message)s"
+)
 
 
 app = FastAPI(title=PROJECT_NAME,

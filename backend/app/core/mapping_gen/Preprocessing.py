@@ -9,6 +9,7 @@ def get_xml_raw_vocab_list(xml_path, xml_name):
     elem_list = [elem.tag for elem in root.iter()]
     return elem_list
 
+
 def clean_split_elem_list(elem_list):
     cleaned_elem_list = []
     for elem in elem_list:
@@ -18,22 +19,18 @@ def clean_split_elem_list(elem_list):
             cleaned_elem_list.append(se)
     return cleaned_elem_list
 
-    return strlist
-
 
 def getFileExtension(filename):
-    owl='owl'
-    xsd='xsd'
-    xml='xml'
-    ttl='ttl'
-    ext=filename.split(".")[1]
-    if (ext == owl):
+    owl = 'owl'
+    xsd = 'xsd'
+    xml = 'xml'
+    ttl = 'ttl'
+    ext = filename.split(".")[1]
+    if ext == owl:
         return owl
-    elif(ext == xsd):
+    elif ext == xsd:
         return xsd
-    elif(ext == xml):
+    elif ext == xml:
         return xml
-    elif(ext == ttl):
+    elif ext == ttl:
         return ttl
-
-

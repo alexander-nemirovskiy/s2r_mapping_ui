@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog'
-import { UploadService } from '../services/upload.service';
+import { FileService } from '../services/file.service';
 import { DialogUploadComponent } from '../dialog-upload/dialog-upload.component';
 
 @Component({
@@ -9,7 +9,7 @@ import { DialogUploadComponent } from '../dialog-upload/dialog-upload.component'
   styleUrls: [ './file-upload.component.scss'  ]
 })
 export class FileUploadComponent{
-    constructor(public dialog: MatDialog, public uploadService: UploadService) {}
+    constructor(public dialog: MatDialog, public uploadService: FileService) {}
 
     public openUploadDialog() {
       let dialogRef = this.dialog.open(DialogUploadComponent, {
