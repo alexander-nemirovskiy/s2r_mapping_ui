@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatRadioChange, } from '@angular/material/radio';
+import { MappingPair } from '../models/MappingPair';
+import { LoggerService } from '../services/logger.service';
 
 @Component({
   selector: 'mapping-selector',
@@ -8,17 +10,13 @@ import { MatRadioChange, } from '@angular/material/radio';
   styleUrls: ['./mapping-selector.component.scss']
 })
 export class MappingSelectorComponent implements OnInit {
+    @Input() mappingPair: MappingPair;
+
     private _custom_option = "";
     private selected_option = "";
     selector_form: FormGroup;
-    temp_options = [
-        {name: "first"},
-        {name: "second"},
-        {name: "third"},
-        {name: "fourth"},
-    ];
 
-    constructor(private formBuilder: FormBuilder) { }
+    constructor(private formBuilder: FormBuilder, private logger: LoggerService) { }
 
     ngOnInit(): void {
         this.selector_form = this.formBuilder.group({
@@ -36,16 +34,13 @@ export class MappingSelectorComponent implements OnInit {
     }
 
     confirm(){
-        // required otherwise the first call does not allow <input> to be
-        // the value (nobody is setting selected_option)
         let value = this.selector_form.controls['mapping_options'].value
-        // let value = this.selected_option
         if (this.isValid){
             if(value === "other"){
-                console.log(`Form value: ${this._custom_option}`)
+                this.logger.log(`Form value: ${this._custom_option}`)
                 return
             }
-            console.log(`Form value: ${value}`);
+            this.logger.log(`Form value: ${value}`);
         }
     }
 

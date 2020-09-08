@@ -3,7 +3,7 @@
     <ng-template let-items [ngTemplateOutletContext]="{ $implicit: mappings$ | async }" 
     [ngTemplateOutlet]="t" #t>
     <div *ngFor="let item of items">
-        <mapping-selector></mapping-selector>
+        <mapping-selector [mappingPair]="item"></mapping-selector>
     </div>
     <div *ngIf="items?.length === 0">
         <p>There is no content for this mapping yet!</p>
