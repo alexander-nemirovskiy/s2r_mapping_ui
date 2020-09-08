@@ -980,3 +980,4 @@ gtfs:comment a rdf:Property ;
              rdfs:comment "A comment on the relation between the RDFS ontology and the CSV specification."@en ;
              rdfs:comment "Un comentario entre la relación entre la ontología RDFS y la especificación CSV."@es .
              
+

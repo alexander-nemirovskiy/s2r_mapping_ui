@@ -1,8 +1,9 @@
-import xlrd
+# import xlrd
 import csv
 import pandas as pd
+from pathlib import Path
 import numpy as np
-from variables import *
+from .variables import *
 import rdflib
 from rdflib import Graph, URIRef, RDFS, RDF
 import re
@@ -242,12 +243,15 @@ def unstructured_csv_fixer(csv_file):
 
 def df_col_adjuster(csv_file, user_specified_conversion_type):
     """Function to replace the cols name and add extra col to be filled during Annotation identification"""
-    if user_specified_conversion_type == 0:
+    if user_specified_conversion_type == "ttl2xml":
         new_col_names = ['ttl_term', 'xml_term', 'confidence_score']
         # print("ttl2xml")
-    else:
+    elif user_specified_conversion_type == "xml2ttl":
         new_col_names = ['xml_term', 'ttl_term', 'confidence_score']
         # print("xml2ttl")
+    else:
+        raise NotImplementedError()
+    csv_file.drop(csv_file.columns[0], axis=1, inplace=True)
     csv_file.columns = new_col_names  # Replace the col names for better readability during the process.
     csv_file["Annotation"] = "NotFound"  # Adding extra col to be filled later
     return csv_file
@@ -444,7 +448,7 @@ def mapping_generator(annotated_dataframe, ttl_term_type_dataframe, save_locatio
 # -----------------------End of function--------------------------------- #
 
 
-def files_to_list(java_files_names_list):
+def files_to_list(java_files_names_list, java_files_directory):
     """ Function to Iterate over all the java files reading them line by line
     and for EACH file append A list to the java_files_lists"""
 
@@ -457,7 +461,7 @@ def files_to_list(java_files_names_list):
         # Getting the java file name inside the java_files_lists
         source_file_name = java_files_names_list[file_idx]
         # Generating the location of the java file
-        source_file_location = java_files_directory + '\\' + source_file_name
+        source_file_location = Path.cwd().joinpath(java_files_directory, source_file_name)
         # Reading the java file
         with open(source_file_location, 'r') as source_file:
             # Read all the lines of the java file

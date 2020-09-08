@@ -1,16 +1,20 @@
 import os
-from functions import *
-from variables import *
+
+from pandas import DataFrame
+
+from .functions import *
+from .variables import *
 from os import listdir
 from os.path import isfile, join
+
+from .functions import ontology_graph_loader
 
 """ --------------------------- ttl terms type identification --------------------------- """
 
 
-def term_type_identifier(inputs_directory=inputs_directory, input_ttl_name=input_ttl_name,
-                         outputs_directory=outputs_directory, ttl_term_type_csv_name=ttl_term_type_csv_name,
-                         note_file_name=note_file_name):
-
+def term_type_identifier(inputs_directory, input_ttl_name,
+                         outputs_directory, ttl_term_type_csv_name,
+                         note_file_name):
     """ Function to identify the type of the terms """
 
     # * Directories
@@ -32,19 +36,18 @@ def term_type_identifier(inputs_directory=inputs_directory, input_ttl_name=input
 
     # Step3:
     # Saving the the extracted rdf objects into csv file
-    ttl_term_type_csv = target_subjects_to_csv(save_loc=ttl_term_type_csv_location,
-                                               obj_class_list=obj_class_list,
-                                               obj_property_list=obj_property_list)
+    ttl_term_type_csv: DataFrame = target_subjects_to_csv(save_loc=ttl_term_type_csv_location,
+                                                          obj_class_list=obj_class_list,
+                                                          obj_property_list=obj_property_list)
 
 
 """ --------------------------- Finding the annotations --------------------------- """
 
 
-def annotation_finder(outputs_directory=outputs_directory, selected_csv_name=selected_csv_name,
-                      inputs_directory=inputs_directory, input_xml_name=input_xml_name,
-                      input_ttl_name=input_ttl_name, annotated_csv_name=annotated_csv_name,
-                      ttl_term_type_csv_name=ttl_term_type_csv_name, user_specified_conversion_type=0):
-
+def annotation_finder(outputs_directory, selected_csv_name,
+                      inputs_directory, input_xml_name,
+                      input_ttl_name, annotated_csv_name,
+                      ttl_term_type_csv_name, user_specified_conversion_type):
     """ Function to find the annotations"""
 
     # * Directories
@@ -58,7 +61,8 @@ def annotation_finder(outputs_directory=outputs_directory, selected_csv_name=sel
     input_csv_file = pd.read_csv(selected_csv_location)
 
     # Adjust the input csv by changing the cols names and adding new col for RDF values
-    annotated_df = df_col_adjuster(user_specified_conversion_type=user_specified_conversion_type, csv_file=input_csv_file)
+    annotated_df = df_col_adjuster(user_specified_conversion_type=user_specified_conversion_type,
+                                   csv_file=input_csv_file)
 
     # Read the csv file which contains the ttl terms and their corresponding types
     ttl_term_type_csv = pd.read_csv(ttl_term_type_csv_location)
@@ -72,9 +76,8 @@ def annotation_finder(outputs_directory=outputs_directory, selected_csv_name=sel
 """ --------------------------- Java Files Annotating --------------------------- """
 
 
-def java_annotator(outputs_directory=outputs_directory, annotated_csv_name=annotated_csv_name,
-                   java_files_directory=java_files_directory):
-
+def java_annotator(outputs_directory, annotated_csv_name,
+                   java_files_directory, final_java_files_directory):
     """ The function to add the annotations to the Java files """
 
     # * Directories
@@ -88,7 +91,7 @@ def java_annotator(outputs_directory=outputs_directory, annotated_csv_name=annot
 
     # List which contains all the java files line by line as string.
     # For each file there will be a list which each of its elements is a line of the java file
-    java_files_lists = files_to_list(java_files_names_list=java_files_names_list)
+    java_files_lists = files_to_list(java_files_names_list=java_files_names_list, java_files_directory=java_files_directory)
 
     # Final annotated java lists
     annotated_java_files_lists = java_lists_annotator(input_annotated_df=annotated_df,
@@ -102,31 +105,34 @@ def java_annotator(outputs_directory=outputs_directory, annotated_csv_name=annot
 
 """ --------------------------- Merged Steps --------------------------- """
 
-def type_identifier_to_java_annotator(inputs_directory=inputs_directory, input_ttl_name=input_ttl_name,
-                                      outputs_directory=outputs_directory, ttl_term_type_csv_name=ttl_term_type_csv_name,
-                                      note_file_name=note_file_name, selected_csv_name=selected_csv_name,
-                                      input_xml_name=input_xml_name, annotated_csv_name=annotated_csv_name,
-                                      java_files_directory=java_files_directory, user_specified_conversion_type=0):
-    """ Function to execute the last three steps """
 
+def type_identifier_to_java_annotator(inputs_directory, input_ttl_name,
+                                      outputs_directory, ttl_term_type_csv_name,
+                                      note_file_name, selected_csv_name,
+                                      input_xml_name, annotated_csv_name,
+                                      java_files_directory,
+                                      final_java_files_directory,
+                                      user_specified_conversion_type):
+    """ Function to execute the last three steps """
 
     """ --------------------------- ttl terms type identification --------------------------- """
 
     term_type_identifier(inputs_directory=inputs_directory, input_ttl_name=input_ttl_name,
-                             outputs_directory=outputs_directory, ttl_term_type_csv_name=ttl_term_type_csv_name,
-                             note_file_name=note_file_name)
+                         outputs_directory=outputs_directory, ttl_term_type_csv_name=ttl_term_type_csv_name,
+                         note_file_name=note_file_name)
 
     """ --------------------------- Finding the annotations --------------------------- """
     annotation_finder(outputs_directory=outputs_directory, selected_csv_name=selected_csv_name,
-                          inputs_directory=inputs_directory, input_xml_name=input_xml_name,
-                          input_ttl_name=input_ttl_name, annotated_csv_name=annotated_csv_name,
-                          ttl_term_type_csv_name=ttl_term_type_csv_name, user_specified_conversion_type=0)
+                      inputs_directory=inputs_directory, input_xml_name=input_xml_name,
+                      input_ttl_name=input_ttl_name, annotated_csv_name=annotated_csv_name,
+                      ttl_term_type_csv_name=ttl_term_type_csv_name,
+                      user_specified_conversion_type=user_specified_conversion_type)
 
     """ --------------------------- Java Files Annotating --------------------------- """
 
     java_annotator(outputs_directory=outputs_directory, annotated_csv_name=annotated_csv_name,
-                       java_files_directory=java_files_directory)
-
+                   java_files_directory=java_files_directory,
+                   final_java_files_directory=final_java_files_directory)
 
 # Todo: The only function that should be called from this file to run the rest of the pipeline
 # type_identifier_to_java_annotator(inputs_directory=inputs_directory, input_ttl_name=input_ttl_name,
