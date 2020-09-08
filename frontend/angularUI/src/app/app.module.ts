@@ -1,4 +1,4 @@
-import { UploadService } from './services/upload.service';
+import { FileService } from './services/file.service';
 import { MaterialModule } from './material.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -11,7 +11,12 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
 import { Base404Component } from './base404/base404.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { DialogUploadComponent } from './dialog-upload/dialog-upload.component';
-import {  HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MappingSelectorComponent } from './mapping-selector/mapping-selector.component';
+import { FileManagerComponent } from './file-manager/file-manager.component';
+import { FileSelectComponent } from './file-select/file-select.component';
+import { MappingContainerComponent } from './mapping-container/mapping-container.component';
 
 @NgModule({
   declarations: [
@@ -20,16 +25,22 @@ import {  HttpClientModule } from '@angular/common/http';
     ToolbarComponent,
     Base404Component,
     FileUploadComponent,
-    DialogUploadComponent
+    DialogUploadComponent,
+    MappingSelectorComponent,
+    MappingContainerComponent,
+    FileManagerComponent,
+    FileSelectComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
-  providers: [UploadService, HttpClientModule],
+  providers: [FileService, HttpClientModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

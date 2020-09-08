@@ -1,0 +1,23 @@
+<div *ngIf="visible; then thenBlock; else elseBlock"></div>
+<ng-template #thenBlock>
+    <ng-template let-items [ngTemplateOutletContext]="{ $implicit: mappings$ | async }" 
+    [ngTemplateOutlet]="t" #t>
+    <div *ngFor="let item of items">
+        <mapping-selector [mappingPair]="item"></mapping-selector>
+    </div>
+    <div *ngIf="items?.length === 0">
+        <p>There is no content for this mapping yet!</p>
+    </div>
+    <div *ngIf="items === null">
+        <div>
+            <h2>Loading data...</h2>
+            <mat-spinner></mat-spinner>
+        </div>
+    </div>
+</ng-template>
+</ng-template>
+<ng-template #elseBlock>
+    <div>
+        <h2>No mapping has been selected yet</h2>
+    </div>
+</ng-template>

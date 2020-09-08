@@ -18,9 +18,9 @@ def variables_init(raw_csv_name = "Sumst_MatchCountttl2xml.csv", input_xml_name 
     note_file_name = note_file_name  # The output file name for note file to record the individuals
 
     # * Directories
-    inputs_directory = os.path.join('.', 'inputs')
+    inputs_directory = os.path.join('.', '../../../input')
     outputs_directory = os.path.join('.', 'outputs')
-    java_files_directory = os.path.join('.', 'inputs', 'java_classes')
+    java_files_directory = os.path.join('.', '../../../input', 'java_classes')
     final_java_files_directory = os.path.join('.', 'outputs', 'final_java_classes')
 
 

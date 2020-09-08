@@ -5,3 +5,13 @@ ALLOWED_HOSTS = [
     'https://127.0.0.1',
     'http://127.0.0.1:4200'
 ]
+MAPPING_OUTPUT_FOLDER = 'output'
+MAPPING_UPLOAD_FOLDER = 'uploads'
+CLEANED_FILE_FOLDER = 'cleaner'
+ALLOWED_INPUT_EXTENSIONS = ['xml', 'xsd']
+ALLOWED_ONTOLOGY_EXTENSIONS = ['ttl', 'owl']
+
+
+# * Other Variables
+raw_csv_unstructured = True  # True if the out put of the W2V is unstructured
+automatic_selection = False  # True if the user is willing to choose just the top scored mappings.

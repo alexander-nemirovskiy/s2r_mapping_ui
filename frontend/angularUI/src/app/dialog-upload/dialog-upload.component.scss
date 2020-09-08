@@ -1,18 +1,18 @@
-.add-files-btn {
-    float: right;
-}
-
 :host {
     height: 100%;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
+
+    > div {
+        > * {
+            flex: 1;
+        }
+
+        & > .actions, & > div:first-of-type {
+            justify-content: flex-end;
+        }
+
+        > div:first-of-type {
+            display: flex;
+        }
+    } 
 }
 
-.actions {
-    justify-content: flex-end;
-}
-
-.container {
-    height: 100%;
-}

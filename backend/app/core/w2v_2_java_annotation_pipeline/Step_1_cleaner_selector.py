@@ -1,12 +1,16 @@
 import os
-from functions import *
-from variables import *
+
+from pandas import DataFrame
+
+from .functions import *
+from ...app_settings import raw_csv_unstructured
+import pandas as pd
 
 """ --------------------------- Cleaning --------------------------- """
 
 
-def cleaner(inputs_directory=inputs_directory, raw_csv_name=raw_csv_name, input_conversion_type=input_conversion_type,
-            outputs_directory=outputs_directory, cleaned_csv_name=cleaned_csv_name):
+def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
+            outputs_directory, cleaned_csv_name):
     """ Function to transform the output of W2V in a standard csv format """
 
     # * Directories
@@ -23,20 +27,21 @@ def cleaner(inputs_directory=inputs_directory, raw_csv_name=raw_csv_name, input_
     # * Transfer the resulting lists into appropriate pandas data frame
     input_df = pd.DataFrame(list(zip(source_list, mapped_list, confidence_list)),
                             columns=['source_term', 'mapped_term', 'confidence_score'])
-    input_df.to_csv(os.path.join(outputs_directory, cleaned_csv_name), index=False)
+    # input_df.to_csv(os.path.join(outputs_directory, cleaned_csv_name), index=False)
+    return input_df
 
 
 """ -------------------------- Selecting -------------------------- """
 
 
-def selector(selection_criteria=automatic_selection,
-             input_csv_location=os.path.join(outputs_directory, cleaned_csv_name)):
+def selector(selection_criteria, input_df: DataFrame, outputs_directory, selected_csv_name) -> DataFrame:
+
     """ The function to select individual mappings either automatically, or by the user  """
-    input_df = pd.read_csv(input_csv_location)  # Reading the input csv into Pandas df
-    if selection_criteria:
+    # input_df = pd.read_csv(input_csv_location)  # Reading the input csv into Pandas df
+    if selection_criteria:  # selection criteria for automatic or manual process
         print("Selecting the mappings according to their scores")
         # * Getting the index of the rows with maximum confidence for each group
-        idx = input_df.groupby(['source_term'])['confidence_score'].\
+        idx = input_df.groupby(['source_term'])['confidence_score']. \
                   transform(max) == input_df['confidence_score']
         selected_df = input_df[idx]
         # * Attention: In case of multiple mapping for a source term with equal score as maximum,
@@ -51,6 +56,7 @@ def selector(selection_criteria=automatic_selection,
         selected_df.to_csv(os.path.join(outputs_directory, selected_csv_name), index=False)
 
     print("The final mappings are saved")
+    return selected_df
 
 # todo: the two functions that should be called
 # cleaner(inputs_directory=inputs_directory, raw_csv_name=raw_csv_name, input_conversion_type=input_conversion_type,
