@@ -3,10 +3,9 @@ from .ReadWriteFiles import readTextFile, writeCsv
 from .TwoDMatrixOperations import makeCompound2dArray
 from .MatchVocab import matchWordsModel
 from .MatchPair import getValueThreshold
-from .modelload import model
 
 
-class MatchVectorComp:
+def MatchVectorComp(model):
     s_data = readTextFile(standardsOutput, source_rw)
     t_data = readTextFile(standardsOutput, target_rw)
     print("Step 6: ----------------------->  Model written files has been read")

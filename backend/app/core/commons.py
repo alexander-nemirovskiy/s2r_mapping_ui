@@ -1,3 +1,6 @@
+from typing import Optional
+
+from pydantic import BaseModel
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.status import HTTP_400_BAD_REQUEST
@@ -13,6 +16,11 @@ class API_Exception(Exception):
         self.error_code = error_code
         self.message = message
         super().__init__(self.message)
+
+
+class OkResponse(BaseModel):
+    task_completed: bool
+    message: Optional[str] = ''
 
 
 async def http_error_handler(request: Request, exc: API_Exception) -> JSONResponse:

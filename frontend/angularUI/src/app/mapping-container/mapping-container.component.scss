@@ -1,0 +1,43 @@
+.flex-container {
+    
+
+    > div {
+        flex: 1 2 45vw;
+        // padding-top: 1vh;
+        padding-bottom: 1vh;
+
+        // confirmed mappings
+        &:last-child {
+            flex: 1 1 25vw;
+            padding: 1vh 1vw;
+            margin-left: 2vw;
+            margin-top: 2vh;
+            max-height: 70vh;
+            min-height: fit-content;
+            
+            background-color: white;
+
+            > div{
+                flex: 5 1 90%;
+                overflow-y: auto;
+
+                &.actions {
+                    flex: 1 0 10%;
+                    justify-content: flex-end;
+                }
+            }
+        }
+
+        > div {
+            padding-top: 2vh;
+        }
+
+        > #loadingContainer {
+            
+            > div {
+                justify-content: center;
+
+            }
+        }
+    }
+}

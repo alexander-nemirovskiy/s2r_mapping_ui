@@ -13,6 +13,8 @@ import { MappingPair } from '../models/MappingPair';
 export class MappingContainerComponent implements OnInit, OnDestroy {
     visible = false;
     mappings$: Observable<MappingPair[]>;
+    confirmedItems: MappingPair[] = [];
+    confirmedItemsSub: Subscription;
 
     private visibility: Subscription;
 
@@ -31,10 +33,23 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
                 }
             }
         );
+        this.confirmedItemsSub = this.mappingService.confirmedPairs$.subscribe(
+            (pair: MappingPair) => {
+                this.confirmedItems.push(pair);
+            }
+        );
+    }
+
+    finalizeChoice(){
+        this.mappingService.finalizeMappings(this.confirmedItems).subscribe(
+            data => {alert(data)},
+            error => {alert(error)}
+        );
     }
 
     ngOnDestroy(): void {
         this.visibility.unsubscribe();
+        this.confirmedItemsSub.unsubscribe();
     }
 
 }

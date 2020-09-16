@@ -27,17 +27,15 @@ def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
     # * Transfer the resulting lists into appropriate pandas data frame
     input_df = pd.DataFrame(list(zip(source_list, mapped_list, confidence_list)),
                             columns=['source_term', 'mapped_term', 'confidence_score'])
-    # input_df.to_csv(os.path.join(outputs_directory, cleaned_csv_name), index=False)
     return input_df
 
 
 """ -------------------------- Selecting -------------------------- """
 
 
-def selector(selection_criteria, input_df: DataFrame, outputs_directory, selected_csv_name) -> DataFrame:
+def selector(selection_criteria: bool, input_df: DataFrame, outputs_directory, selected_csv_name) -> DataFrame:
 
     """ The function to select individual mappings either automatically, or by the user  """
-    # input_df = pd.read_csv(input_csv_location)  # Reading the input csv into Pandas df
     if selection_criteria:  # selection criteria for automatic or manual process
         print("Selecting the mappings according to their scores")
         # * Getting the index of the rows with maximum confidence for each group
@@ -57,10 +55,3 @@ def selector(selection_criteria, input_df: DataFrame, outputs_directory, selecte
 
     print("The final mappings are saved")
     return selected_df
-
-# todo: the two functions that should be called
-# cleaner(inputs_directory=inputs_directory, raw_csv_name=raw_csv_name, input_conversion_type=input_conversion_type,
-#             outputs_directory=outputs_directory, cleaned_csv_name=cleaned_csv_name)
-#
-# selector(selection_criteria=automatic_selection,
-#              input_csv_location=os.path.join(outputs_directory, cleaned_csv_name))

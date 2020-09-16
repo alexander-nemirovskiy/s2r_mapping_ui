@@ -1,4 +1,4 @@
-<div class="flex-container row mat-elevation-z2">
+<div class="flex-container row mat-elevation-z2" *ngIf="showSelector">
     <div class="flex-container row">
         <div class="mapping-source">{{ mappingPair.sourceTerm }}</div>
         <mat-divider [vertical]="true"></mat-divider>
@@ -18,7 +18,7 @@
         </form>
     </div>
     <div class="flex-container row">
-        <button mat-button (click)="confirm()">Delete</button>
-        <button mat-raised-button (click)="confirm()" [disabled]="isValid()">Confirm</button>
+        <button mat-button (click)="deleteMapping()">Delete</button>
+        <button mat-raised-button (click)="confirmMapping()" [disabled]="isValid()" color="primary">Confirm</button>
     </div>
 </div>

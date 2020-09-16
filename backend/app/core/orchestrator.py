@@ -4,9 +4,12 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from pathlib import Path
 from time import sleep
 import pandas as pd
+from pandas import DataFrame
+
 from .w2v_2_java_annotation_pipeline.Step_1_cleaner_selector import cleaner, selector
 from .w2v_2_java_annotation_pipeline.Step_2_type_identification_to_java_annotating \
-    import  type_identifier_to_java_annotator
+    import type_identifier_to_java_annotator
+from .mapping_gen.mapping import start_mapping
 
 from ..app_settings import MAPPING_OUTPUT_FOLDER, CLEANED_FILE_FOLDER
 
@@ -17,35 +20,28 @@ def long_task(t):
     return t ** 2
 
 
-async def generate_mapping_pairs() -> dict:
+async def generate_mapping_pairs(source_file: str, target_file: str) -> dict:
     loop = asyncio.get_running_loop()
-    # executor = ThreadPoolExecutor(max_workers=4)
     with ThreadPoolExecutor() as pool:
-        # result = await asyncio.gather(loop.run_in_executor(executor, long_task, 10))
         # TODO substitute with actual library call
-        result = await loop.run_in_executor(pool, long_task, 10)
+        # result = await loop.run_in_executor(pool, start_mapping, source_file, target_file)
+        result = await loop.run_in_executor(pool, long_task, 5)
         print(f"Mapping results: [{result}]")
 
-    # TODO pass results to cleaner function
-    path = Path.cwd().joinpath(MAPPING_OUTPUT_FOLDER, CLEANED_FILE_FOLDER, "cleaned_input.csv")
-    df = pd.read_csv(path, usecols=["source_term", "mapped_term"])
-    gb = df.groupby('source_term')['mapped_term'].apply(list).to_dict()
+    # # TODO pass results to cleaner function
+    # path = Path.cwd().joinpath(MAPPING_OUTPUT_FOLDER, CLEANED_FILE_FOLDER, "cleaned_input.csv")
+    # df = pd.read_csv(path, usecols=["source_term", "mapped_term"])
+    # gb = df.groupby('source_term')['mapped_term'].apply(list).to_dict()
 
-    # cleaner
-    # Defining the type of the conversion. 0="ttl2xml"  1="xml2ttl"
-    # user_specified_conversion_type = user_specified_conversion_type
-    # input_conversion_list = ["ttl2xml", "xml2ttl"]
-    # input_conversion_type = input_conversion_list[user_specified_conversion_type]
     cleaner_df = cleaner('output', 'Sumst_MatchCountttl2xml.csv', 'ttl2xml', 'output', 'cleaned_input.csv')
+    gb = cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
+    return gb
 
+
+async def generate_annotations(cleaner_df: DataFrame):
     #################################
 
-    # selector
-    # automatic,
-    selector_df = pd.read_csv(Path.cwd().joinpath('output', 'cleaner', 'cleaned_input.csv'))
-    out_df = selector(True, selector_df, 'output', 'selector_output.csv')
-
-
+    out_df = selector(True, cleaner_df, 'output', 'selector_output.csv')
 
     # step 2:
     type_identifier_to_java_annotator(
@@ -58,4 +54,4 @@ async def generate_mapping_pairs() -> dict:
         final_java_files_directory=Path.cwd().joinpath('output', 'annotated_java_files'),
         user_specified_conversion_type='ttl2xml'
     )
-    return gb
+    return 'ok'
