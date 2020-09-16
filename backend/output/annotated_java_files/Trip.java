@@ -1,12 +1,8 @@
 package com.example.jaxb.generated;
 
-//@RdfProperty(propertyName = "gtfs:trip")
-@RdfsClass("gtfs:Trip")
 public class Trip {
 	@XmlAttribute(name = "route_id", required = true)
 	private String routeId;
-	@RdfProperty(propertyName = "gtfs:longName")
-	//@RdfsClass("gtfs:PickupType")
 	@XmlAttribute(name = "service_id", required = true)
 	private String serviceId;
 	@XmlAttribute(name = "trip_id", required = true)
@@ -16,23 +12,16 @@ public class Trip {
 	@XmlAttribute(name = "trip_short_name")
 	private String tripShortName;
 	@XmlSchemaType(name = "unsignedByte")
-	@RdfProperty(propertyName = "gtfs:direction")
 	@XmlAttribute(name = "direction_id")
 	private Short directionId;
-	@RdfProperty(propertyName = "gtfs:block")
 	@XmlAttribute(name = "block_id")
 	private String blockId;
 	@XmlAttribute(name = "shape_id")
 	private String shapeId;
 	@XmlSchemaType(name = "unsignedByte")
-	@RdfProperty(propertyName = "gtfs:bikesAllowed")
 	@XmlAttribute(name = "bikes_allowed")
 	private Short bikesAllowed;
 	@XmlSchemaType(name = "unsignedByte")
-	//NotFound
-	@RdfProperty(propertyName = "gtfs:wheelchairAccessible")
-	//NotFound
-	//NotFound
 	@XmlAttribute(name = "wheelchair_accessible")
 	private Short wheelchairAccessible;
 

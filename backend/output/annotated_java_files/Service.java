@@ -1,21 +1,9 @@
 package com.example.jaxb.generated;
 
-@RdfsClass("gtfs:Service")
-//@RdfProperty(propertyName = "gtfs:serviceRule")
-//@RdfProperty(propertyName = "gtfs:service")
 public class Service {
-	@RdfProperty(propertyName = "gtfs:longName")
-	//@RdfsClass("gtfs:PickupType")
 	@XmlAttribute(name = "service_id", required = true)
 	private String serviceId;
 	@XmlSchemaType(name = "unsignedByte")
-	@RdfProperty(propertyName = "gtfs:monday")
-	@RdfProperty(propertyName = "gtfs:thursday")
-	@RdfProperty(propertyName = "gtfs:wednesday")
-	@RdfProperty(propertyName = "gtfs:sunday")
-	@RdfProperty(propertyName = "gtfs:saturday")
-	@RdfProperty(propertyName = "gtfs:tuesday")
-	@RdfProperty(propertyName = "gtfs:friday")
 	@XmlAttribute(name = "monday", required = true)
 	private short monday;
 	@XmlSchemaType(name = "unsignedByte")
@@ -37,11 +25,9 @@ public class Service {
 	@XmlAttribute(name = "sunday", required = true)
 	private short sunday;
 	@XmlSchemaType(name = "unsignedInt")
-	@RdfProperty(propertyName = "gtfs:startTime")
 	@XmlAttribute(name = "start_date", required = true)
 	private long startDate;
 	@XmlSchemaType(name = "unsignedInt")
-	@RdfProperty(propertyName = "gtfs:endTime")
 	@XmlAttribute(name = "end_date", required = true)
 	private long endDate;
 

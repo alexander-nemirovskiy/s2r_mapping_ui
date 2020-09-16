@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatRadioChange, } from '@angular/material/radio';
 import { MappingPair } from '../models/MappingPair';
 import { LoggerService } from '../services/logger.service';
+import { MappingService } from '../services/mapping.service';
 
 @Component({
   selector: 'mapping-selector',
@@ -15,8 +16,12 @@ export class MappingSelectorComponent implements OnInit {
     private _custom_option = "";
     private selected_option = "";
     selector_form: FormGroup;
+    public showSelector = true;
 
-    constructor(private formBuilder: FormBuilder, private logger: LoggerService) { }
+    constructor(
+        private formBuilder: FormBuilder, 
+        private mappingService: MappingService,
+        private logger: LoggerService) { }
 
     ngOnInit(): void {
         this.selector_form = this.formBuilder.group({
@@ -33,15 +38,27 @@ export class MappingSelectorComponent implements OnInit {
         this.selected_option = mrChange.value;
     }
 
-    confirm(){
+    confirmMapping(){
         let value = this.selector_form.controls['mapping_options'].value
         if (this.isValid){
+            let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, []);
             if(value === "other"){
                 this.logger.log(`Form value: ${this._custom_option}`)
-                return
+                m.mappingOptions.push(this._custom_option);
             }
-            this.logger.log(`Form value: ${value}`);
+            else {
+                this.logger.log(`Form value: ${value}`);
+                m.mappingOptions.push(value);
+            }
+            this.mappingService.confirmMappingPair(m);
+            this.logger.warn('Selection performed');
+            this.showSelector = false;
         }
+    }
+
+    deleteMapping(){
+        this.logger.log(`Option ${this.mappingPair.sourceTerm} was rejected.`);
+        this.showSelector = false;
     }
 
     isValid(): boolean{

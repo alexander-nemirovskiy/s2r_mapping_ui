@@ -222,3 +222,5 @@ dmypy.json
 
 
 /frontend/angularUI/.vscode/
+/backend/output
+/backend/uploads

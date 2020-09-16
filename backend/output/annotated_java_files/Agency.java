@@ -1,7 +1,5 @@
 package com.example.jaxb.generated;
 
-//@RdfProperty(propertyName = "gtfs:agency")
-@RdfsClass("gtfs:Agency")
 public class Agency {
 	@XmlAttribute(name = "agency_id")
 	private String agencyId;
@@ -13,7 +11,6 @@ public class Agency {
 	private String agencyTimezone;
 	@XmlAttribute(name = "agency_lang")
 	private String agencyLang;
-	//NotFound
 	@XmlAttribute(name = "agency_phone")
 	private String agencyPhone;
 	@XmlAttribute(name = "agency_fare_url")

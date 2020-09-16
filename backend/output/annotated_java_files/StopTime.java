@@ -6,11 +6,9 @@ public class StopTime {
 	@XmlAttribute(name = "trip_id", required = true)
 	private String tripId;
 	@XmlSchemaType(name = "time")
-	@RdfProperty(propertyName = "gtfs:arrivalTime")
 	@XmlAttribute(name = "arrival_time", required = true)
 	private XMLGregorianCalendar arrivalTime;
 	@XmlSchemaType(name = "time")
-	@RdfProperty(propertyName = "gtfs:departureTime")
 	@XmlAttribute(name = "departure_time", required = true)
 	private XMLGregorianCalendar departureTime;
 	@XmlAttribute(name = "stop_id", required = true)
@@ -21,12 +19,9 @@ public class StopTime {
 	@XmlAttribute(name = "stop_headsign")
 	private String stopHeadsign;
 	@XmlSchemaType(name = "unsignedByte")
-	@RdfProperty(propertyName = "gtfs:pickupType")
 	@XmlAttribute(name = "pickup_type")
 	private Short pickupType;
 	@XmlSchemaType(name = "unsignedByte")
-	@RdfProperty(propertyName = "gtfs:dropOffType")
-	//@RdfsClass("gtfs:DropOffType")
 	@XmlAttribute(name = "drop_off_type")
 	private Short dropOffType;
 	@XmlAttribute(name = "shape_dist_traveled")

@@ -1,20 +1,34 @@
 <div *ngIf="visible; then thenBlock; else elseBlock"></div>
 <ng-template #thenBlock>
-    <ng-template let-items [ngTemplateOutletContext]="{ $implicit: mappings$ | async }" 
-    [ngTemplateOutlet]="t" #t>
-    <div *ngFor="let item of items">
-        <mapping-selector [mappingPair]="item"></mapping-selector>
-    </div>
-    <div *ngIf="items?.length === 0">
-        <p>There is no content for this mapping yet!</p>
-    </div>
-    <div *ngIf="items === null">
+    <div class="flex-container row">
         <div>
-            <h2>Loading data...</h2>
-            <mat-spinner></mat-spinner>
+            <ng-template let-items [ngTemplateOutletContext]="{ $implicit: mappings$ | async }" [ngTemplateOutlet]="t"
+                #t>
+                <div *ngFor="let item of items">
+                    <mapping-selector [mappingPair]="item"></mapping-selector>
+                </div>
+                <div *ngIf="items?.length === 0">
+                    <p>There is no content for this mapping yet!</p>
+                </div>
+                <div id="loadingContainer" *ngIf="items === null">
+                    <div class="flex-container row">
+                        <mat-spinner></mat-spinner>
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+        <div class="mat-elevation-z2 flex-container column">
+            <h3>Confirmed mappings</h3>
+            <div>
+                <div *ngFor="let mapping of confirmedItems">
+                {{ mapping.sourceTerm }} :: {{ mapping.mappingOptions[0] }}
+                </div>
+            </div>
+            <div class="actions flex-container row">
+                <button mat-raised-button color="primary" (click)="finalizeChoice()">Finalize choices</button>
+            </div>
         </div>
     </div>
-</ng-template>
 </ng-template>
 <ng-template #elseBlock>
     <div>

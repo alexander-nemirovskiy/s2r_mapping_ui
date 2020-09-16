@@ -2,15 +2,9 @@ package com.example.jaxb.generated;
 
 import java.math.BigDecimal;
 
-//@RdfProperty(propertyName = "gtfs:stopSequence")
-//@RdfProperty(propertyName = "gtfs:destinationStop")
-//@RdfProperty(propertyName = "gtfs:originStop")
-@RdfsClass("gtfs:Stop")
-//@RdfProperty(propertyName = "gtfs:stop")
 public class Stop {
 	@XmlAttribute(name = "stop_id", required = true)
 	private String stopId;
-	@RdfProperty(propertyName = "gtfs:code")
 	@XmlAttribute(name = "stop_code")
 	private String stopCode;
 	@XmlAttribute(name = "stop_name", required = true)
@@ -21,9 +15,6 @@ public class Stop {
 	private BigDecimal stopLat;
 	@XmlAttribute(name = "stop_lon", required = true)
 	private BigDecimal stopLon;
-	@RdfProperty(propertyName = "gtfs:timeZone")
-	@RdfProperty(propertyName = "gtfs:zone")
-	//@RdfsClass("gtfs:Zone")
 	@XmlAttribute(name = "zone_id")
 	private String zoneId;
 	@XmlAttribute(name = "stop_url")
@@ -32,14 +23,11 @@ public class Stop {
 	@XmlAttribute(name = "location_type")
 	private Short locationType;
 	@XmlSchemaType(name = "unsignedByte")
-	//@RdfsClass("gtfs:Station")
 	@XmlAttribute(name = "parent_station")
 	private Short parentStation;
 	@XmlAttribute(name = "stop_timezone")
 	private String stopTimezone;
 	@XmlSchemaType(name = "unsignedByte")
-	//NotFound
-	//@RdfsClass("gtfs:WheelchairBoardingStatus")
 	@XmlAttribute(name = "wheelchair_boarding")
 	private Short wheelchairBoarding;
 

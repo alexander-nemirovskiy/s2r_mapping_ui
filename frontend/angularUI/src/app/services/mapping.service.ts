@@ -1,4 +1,4 @@
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -13,6 +13,8 @@ const mappingURL = environment.API_Endpoint + '/mapping';
   providedIn: 'root'
 })
 export class MappingService {
+    private confirmedPairsSub = new Subject<MappingPair>();
+    public confirmedPairs$ = this.confirmedPairsSub.asObservable();
 
     constructor(private http: HttpClient, private logger: LoggerService) {}
 
@@ -26,7 +28,7 @@ export class MappingService {
                 tap(() => this.logger.log('Mapping done')),
                 catchError( err => {
                     this.logger.error('GET failed: ' + err);
-                    const message = 'Sorry, GET files failed!';
+                    const message = 'Sorry, GET mapping failed!';
                     return throwError(message);
                 }),
                 map((data) => {
@@ -36,6 +38,29 @@ export class MappingService {
                         ret.push(element)
                     });
                     return ret;
+                })
+            );
+    }
+
+    confirmMappingPair(pair: MappingPair){
+        this.confirmedPairsSub.next(pair);
+    }
+
+    finalizeMappings(pairs: MappingPair[]){
+        const confirmedPairs = pairs.map(p => {
+            let v = p.sourceTerm;
+            let t = p.mappingOptions[0];
+            return { [v]: t };
+        })
+        this.logger.warn(`Just checking: ${confirmedPairs}`);
+            
+        return this.http.post(mappingURL + '/pairs', confirmedPairs)
+            .pipe(
+                tap(() => this.logger.log('Pairs confirmed')),
+                catchError( err => {
+                    this.logger.error('POST failed: ' + err);
+                    const message = 'Sorry, POST pair confirmation failed!';
+                    return throwError(message);
                 })
             );
     }

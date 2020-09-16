@@ -1,12 +1,9 @@
 package com.example.jaxb.generated;
 
 public class CalendarDate {
-	@RdfProperty(propertyName = "gtfs:longName")
-	//@RdfsClass("gtfs:PickupType")
 	@XmlAttribute(name = "service_id", required = true)
 	private String serviceId;
 	@XmlSchemaType(name = "unsignedInt")
-	@RdfProperty(propertyName = "gtfs:dateAddition")
 	@XmlAttribute(name = "date", required = true)
 	private long date;
 	@XmlSchemaType(name = "unsignedByte")

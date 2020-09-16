@@ -3,6 +3,8 @@ import csv
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from pandas import DataFrame
+
 from .variables import *
 import rdflib
 from rdflib import Graph, URIRef, RDFS, RDF
@@ -241,7 +243,7 @@ def unstructured_csv_fixer(csv_file):
 # -----------------------End of function--------------------------------- #
 
 
-def df_col_adjuster(csv_file, user_specified_conversion_type):
+def df_col_adjuster(df: DataFrame, user_specified_conversion_type):
     """Function to replace the cols name and add extra col to be filled during Annotation identification"""
     if user_specified_conversion_type == "ttl2xml":
         new_col_names = ['ttl_term', 'xml_term', 'confidence_score']
@@ -251,10 +253,11 @@ def df_col_adjuster(csv_file, user_specified_conversion_type):
         # print("xml2ttl")
     else:
         raise NotImplementedError()
-    csv_file.drop(csv_file.columns[0], axis=1, inplace=True)
-    csv_file.columns = new_col_names  # Replace the col names for better readability during the process.
-    csv_file["Annotation"] = "NotFound"  # Adding extra col to be filled later
-    return csv_file
+    # TODO check for automatic selection: might break it
+    # df.drop(df.columns[0], axis=1, inplace=True)
+    df.columns = new_col_names  # Replace the col names for better readability during the process.
+    df["Annotation"] = "NotFound"  # Adding extra col to be filled later
+    return df
 # -----------------------End of function--------------------------------- #
 
 
