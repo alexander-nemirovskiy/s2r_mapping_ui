@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.example.jaxb.generated.Gtfs.Shapes.Shape.ShapePt;
 
-//@RdfProperty(propertyName = "gtfs:shape")
 public class Shape {
 	@XmlElement(name = "shape_pt", required = true)
 	private List<ShapePt> shapePt;

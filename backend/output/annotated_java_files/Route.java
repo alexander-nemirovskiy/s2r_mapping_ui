@@ -1,14 +1,10 @@
 package com.example.jaxb.generated;
 
-//@RdfProperty(propertyName = "gtfs:routeType")
-@RdfsClass("gtfs:Route")
-//@RdfProperty(propertyName = "gtfs:route")
 public class Route {
 	@XmlAttribute(name = "route_id", required = true)
 	private String routeId;
 	@XmlAttribute(name = "agency_id")
 	private String agencyId;
-	@RdfProperty(propertyName = "gtfs:shortName")
 	@XmlAttribute(name = "route_short_name", required = true)
 	private String routeShortName;
 	@XmlAttribute(name = "route_long_name", required = true)
@@ -20,8 +16,6 @@ public class Route {
 	private short routeType;
 	@XmlAttribute(name = "route_url")
 	private String routeUrl;
-	@RdfProperty(propertyName = "gtfs:color")
-	@RdfProperty(propertyName = "gtfs:textColor")
 	@XmlAttribute(name = "route_color")
 	private String routeColor;
 	@XmlAttribute(name = "route_text_color")

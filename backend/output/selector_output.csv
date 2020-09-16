@@ -1,7 +1,4 @@
 source_term,mapped_term,confidence_score
-Agency,agency,100
-BeforeBoarding,wheelchair_boarding,100
-CalendarRule,calendar,100
-CalendarDateRule,calendar,100
-DropOffType,drop_off_type,100
-EnsuredTransfer,transfers,100
+as1,s1,100
+ds2,s2,100
+ad3,s3,100

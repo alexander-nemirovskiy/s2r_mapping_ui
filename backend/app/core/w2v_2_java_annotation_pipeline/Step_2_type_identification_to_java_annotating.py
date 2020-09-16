@@ -1,7 +1,3 @@
-import os
-
-from pandas import DataFrame
-
 from .functions import *
 from .variables import *
 from os import listdir
@@ -62,7 +58,7 @@ def annotation_finder(outputs_directory, selected_csv_name,
 
     # Adjust the input csv by changing the cols names and adding new col for RDF values
     annotated_df = df_col_adjuster(user_specified_conversion_type=user_specified_conversion_type,
-                                   csv_file=input_csv_file)
+                                   df=input_csv_file)
 
     # Read the csv file which contains the ttl terms and their corresponding types
     ttl_term_type_csv = pd.read_csv(ttl_term_type_csv_location)
@@ -133,10 +129,3 @@ def type_identifier_to_java_annotator(inputs_directory, input_ttl_name,
     java_annotator(outputs_directory=outputs_directory, annotated_csv_name=annotated_csv_name,
                    java_files_directory=java_files_directory,
                    final_java_files_directory=final_java_files_directory)
-
-# Todo: The only function that should be called from this file to run the rest of the pipeline
-# type_identifier_to_java_annotator(inputs_directory=inputs_directory, input_ttl_name=input_ttl_name,
-#                                       outputs_directory=outputs_directory, ttl_term_type_csv_name=ttl_term_type_csv_name,
-#                                       note_file_name=note_file_name, selected_csv_name=selected_csv_name,
-#                                       input_xml_name=input_xml_name, annotated_csv_name=annotated_csv_name,
-#                                       java_files_directory=java_files_directory, user_specified_conversion_type=0)

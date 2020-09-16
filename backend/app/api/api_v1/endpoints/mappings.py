@@ -61,11 +61,12 @@ async def generate_mapping(
                 detail=ErrorCode.GENERIC,
             )
         else:
-            # TODO remove hardcoded variables
-            source: str = 'it.owl'
-            target = 'Connection.xsd'
-            res = await generate_mapping_pairs(source, target)
-            return JSONResponse(content=res)
+            # TODO remove hardcoded variables, add paths instead of names
+            # source: str = 'it.owl'
+            # target = 'Connection.xsd'
+            res = await generate_mapping_pairs(source_file.name, target_file.name)
+            gb = res.groupby('source_term')['mapped_term'].apply(list).to_dict()
+            return JSONResponse(content=gb)
 
 
 @router.get("/mapping/autoselect", response_model=OkResponse)
@@ -89,11 +90,15 @@ async def autogenerate_mapping(
         else:
             source: str = 'it.owl'
             target = 'Connection.xsd'
-            res = await generate_mapping_pairs(source, target)
-            cleaned_df = DataFrame(res)
-            cleaned_df.reset_index(drop=True, inplace=True)
-            await generate_annotations(cleaned_df)
+            res: DataFrame = await generate_mapping_pairs(source, target)
+            await generate_annotations(res, True)
             return {'task_completed': True, 'message': 'mapping completed'}
+
+
+def extract_pair(obj: Dict[str, str]):
+    k = next(iter(obj.keys()))
+    v = obj.get(k)
+    return k, v
 
 
 @router.post("/mapping/pairs", response_model=OkResponse)
@@ -106,16 +111,9 @@ async def confirm_mappings(
             detail=ErrorCode.MISSING_PARAMS,
         )
     else:
-        # cleaned_df = DataFrame(confirmedPairs)
-        in_keys = []
-        in_vals = []
-        for cp in confirmedPairs:
-            k = next(iter(cp.keys()))
-            in_keys.append(k)
-            v = cp.get(k)
-            in_vals.append(v)
-        cleaned_df = DataFrame(list(zip(in_keys, in_vals)), columns=['source_term', 'mapped_term'])
-        # c = DataFrame(list(zip(source_list, mapped_list, confidence_list)), columns = ['source_term', 'mapped_term', 'confidence_score'])
+        val = list(map(extract_pair, confirmedPairs))
+        # cleaned_df = DataFrame(list(zip(in_keys, in_vals)), columns=['source_term', 'mapped_term'])
+        cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term'])
         cleaned_df['confidence_score'] = 100
-        ret = await generate_annotations(cleaned_df)
+        await generate_annotations(cleaned_df, False)
         return {'task_completed': True, 'message': 'mapping completed'}

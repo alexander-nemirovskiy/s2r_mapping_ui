@@ -1,19 +1,13 @@
 package com.example.jaxb.generated;
 
-@RdfsClass("gtfs:ServiceRule")
 public class FareRule {
 	@XmlSchemaType(name = "unsignedByte")
-	//@RdfsClass("gtfs:FareClass")
-	@RdfProperty(propertyName = "gtfs:fareUrl")
-	//@RdfsClass("gtfs:FareRule")
 	@XmlAttribute(name = "fare_id", required = true)
 	private short fareId;
 	@XmlAttribute(name = "route_id")
 	private String routeId;
-	@RdfProperty(propertyName = "gtfs:originZone")
 	@XmlAttribute(name = "origin_id")
 	private String originId;
-	@RdfProperty(propertyName = "gtfs:destinationZone")
 	@XmlAttribute(name = "destination_id")
 	private String destinationId;
 	@XmlAttribute(name = "contains_id")

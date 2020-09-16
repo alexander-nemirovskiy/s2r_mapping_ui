@@ -1,7 +1,3 @@
-import os
-
-from pandas import DataFrame
-
 from .functions import *
 from ...app_settings import raw_csv_unstructured
 import pandas as pd
@@ -34,13 +30,11 @@ def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
 
 
 def selector(selection_criteria: bool, input_df: DataFrame, outputs_directory, selected_csv_name) -> DataFrame:
-
     """ The function to select individual mappings either automatically, or by the user  """
     if selection_criteria:  # selection criteria for automatic or manual process
         print("Selecting the mappings according to their scores")
         # * Getting the index of the rows with maximum confidence for each group
-        idx = input_df.groupby(['source_term'])['confidence_score']. \
-                  transform(max) == input_df['confidence_score']
+        idx = input_df.groupby(['source_term'])['confidence_score'].transform(max) == input_df['confidence_score']
         selected_df = input_df[idx]
         # * Attention: In case of multiple mapping for a source term with equal score as maximum,
         # all will be available in the results. Thus, we keep just one of them (the first one in the df)

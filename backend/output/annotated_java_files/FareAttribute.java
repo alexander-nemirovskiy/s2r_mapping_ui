@@ -3,9 +3,6 @@ package com.example.jaxb.generated;
 import java.math.BigDecimal;
 
 public class FareAttribute {
-	//@RdfsClass("gtfs:FareClass")
-	@RdfProperty(propertyName = "gtfs:fareUrl")
-	//@RdfsClass("gtfs:FareRule")
 	@XmlAttribute(name = "fare_id", required = true)
 	private String fareId;
 	@XmlAttribute(name = "price", required = true)
@@ -13,26 +10,9 @@ public class FareAttribute {
 	@XmlAttribute(name = "currency_type", required = true)
 	private String currencyType;
 	@XmlSchemaType(name = "unsignedByte")
-	@RdfProperty(propertyName = "gtfs:paymentMethod")
-	//@RdfsClass("gtfs:PaymentMethod")
 	@XmlAttribute(name = "payment_method", required = true)
 	private short paymentMethod;
 	@XmlSchemaType(name = "unsignedByte")
-	//@RdfsClass("gtfs:TransfersAllowedType")
-	//NotFound
-	@RdfProperty(propertyName = "gtfs:minimumTransferTime")
-	//NotFound
-	//NotFound
-	//NotFound
-	@RdfProperty(propertyName = "gtfs:transfers")
-	//NotFound
-	//@RdfsClass("gtfs:TransferType")
-	@RdfProperty(propertyName = "gtfs:transferExpiryTime")
-	//NotFound
-	//NotFound
-	//@RdfsClass("gtfs:TransferRule")
-	@RdfProperty(propertyName = "gtfs:transferType")
-	//NotFound
 	@XmlAttribute(name = "transfers")
 	private Short transfers;
 	@XmlSchemaType(name = "unsignedInt")
