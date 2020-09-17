@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { LoggerService } from './logger.service';
 
 @Injectable({
@@ -7,8 +7,8 @@ import { LoggerService } from './logger.service';
 })
 export class MappingNotifierService {
 
-    private subject$ = new Subject<boolean>();
-    public notification = this.subject$.asObservable();
+    private subject$ = new BehaviorSubject<boolean>(null);
+    public notification$ = this.subject$.asObservable();
 
     constructor(private logger: LoggerService) { }
 

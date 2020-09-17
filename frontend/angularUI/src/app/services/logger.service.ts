@@ -1,5 +1,5 @@
-import { environment } from './../../environments/environment';
 import { Injectable } from '@angular/core';
+import { environment } from './../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,6 @@ export class LoggerService {
             console.log(msg);
         }
     }
-
-
 
     error(msg: any) { console.error(msg); }
     warn(msg: any)  { console.warn(msg); }

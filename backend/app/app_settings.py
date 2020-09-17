@@ -5,8 +5,8 @@ ALLOWED_HOSTS = [
     'https://127.0.0.1',
     'http://127.0.0.1:4200'
 ]
-MAPPING_OUTPUT_FOLDER = 'output'
-MAPPING_UPLOAD_FOLDER = 'uploads'
+OUTPUT_FOLDER = 'output'
+UPLOAD_FOLDER = 'uploads'
 CLEANED_FILE_FOLDER = 'cleaner'
 ALLOWED_INPUT_EXTENSIONS = ['xml', 'xsd']
 ALLOWED_ONTOLOGY_EXTENSIONS = ['ttl', 'owl']

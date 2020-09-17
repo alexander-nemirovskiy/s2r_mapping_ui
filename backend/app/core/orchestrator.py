@@ -8,7 +8,7 @@ from pandas import DataFrame
 from .w2v_2_java_annotation_pipeline.Step_1_cleaner_selector import cleaner, selector
 from .w2v_2_java_annotation_pipeline.Step_2_type_identification_to_java_annotating \
     import type_identifier_to_java_annotator
-
+from ..app_settings import OUTPUT_FOLDER
 
 def long_task(t):
     logging.info("2. t: %s", t)
@@ -24,7 +24,9 @@ async def generate_mapping_pairs(source_file: str, target_file: str) -> DataFram
         # result = await loop.run_in_executor(pool, start_mapping, source_file, target_file)
         result = await loop.run_in_executor(pool, long_task, 5)
         print(f"Mapping results: [{result}]")
-    return cleaner('output', 'Sumst_MatchCountttl2xml.csv', 'ttl2xml', 'output', 'cleaned_input.csv')
+    # return cleaner('output', 'Sumst_MatchCountttl2xml.csv', 'ttl2xml', 'output', 'cleaned_input.csv')
+    out_dir = Path.cwd().joinpath(OUTPUT_FOLDER, 'mapping')
+    return cleaner(out_dir, 'Sumst_MatchCountttl2xml.csv', 'ttl2xml', 'output', 'cleaned_input.csv')
 
 
 async def generate_annotations(cleaner_df: DataFrame, automatic: bool):

@@ -1,4 +1,2 @@
 ttl_term,xml_term,confidence_score,Annotation
-as1,s1,100,NotFound
-ds2,s2,100,NotFound
-ad3,s3,100,NotFound
+Agency,agency,100,"@RdfsClass(""gtfs:Agency"")"

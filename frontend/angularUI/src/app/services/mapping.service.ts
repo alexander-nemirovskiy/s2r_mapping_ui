@@ -48,9 +48,7 @@ export class MappingService {
 
     finalizeMappings(pairs: MappingPair[]){
         const confirmedPairs = pairs.map(p => {
-            let v = p.sourceTerm;
-            let t = p.mappingOptions[0];
-            return { [v]: t };
+            return { [p.sourceTerm]: p.mappingOptions[0] };
         })
         this.logger.warn(`Just checking: ${confirmedPairs}`);
             

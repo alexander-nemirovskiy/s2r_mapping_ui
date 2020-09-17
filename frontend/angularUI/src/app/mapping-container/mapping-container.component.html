@@ -2,10 +2,10 @@
 <ng-template #thenBlock>
     <div class="flex-container row">
         <div>
-            <ng-template let-items [ngTemplateOutletContext]="{ $implicit: mappings$ | async }" [ngTemplateOutlet]="t"
+            <!-- <ng-template let-items [ngTemplateOutletContext]="{ $implicit: mappings$ | async }" [ngTemplateOutlet]="t"
                 #t>
                 <div *ngFor="let item of items">
-                    <mapping-selector [mappingPair]="item"></mapping-selector>
+                    <mapping-selector [mappingPair]="item" (dismissEvent)="dismissChild($event)"></mapping-selector>
                 </div>
                 <div *ngIf="items?.length === 0">
                     <p>There is no content for this mapping yet!</p>
@@ -15,13 +15,25 @@
                         <mat-spinner></mat-spinner>
                     </div>
                 </div>
-            </ng-template>
+            </ng-template> -->
+            <div *ngFor="let item of localMappings">
+                <mapping-selector [mappingPair]="item" (dismissEvent)="dismissChild($event)"></mapping-selector>
+            </div>
+            <div *ngIf="localMappings?.length === 0">
+                <p>There is no content for this mapping yet!</p>
+            </div>
+            <div id="loadingContainer" *ngIf="localMappings === null">
+                <div class="flex-container row">
+                    <mat-spinner></mat-spinner>
+                </div>
+            </div>
         </div>
         <div class="mat-elevation-z2 flex-container column">
             <h3>Confirmed mappings</h3>
             <div>
                 <div *ngFor="let mapping of confirmedItems">
                 {{ mapping.sourceTerm }} :: {{ mapping.mappingOptions[0] }}
+                <mat-divider></mat-divider>
                 </div>
             </div>
             <div class="actions flex-container row">

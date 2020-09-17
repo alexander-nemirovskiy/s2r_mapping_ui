@@ -1,5 +1,6 @@
 package com.example.jaxb.generated;
 
+@RdfsClass("gtfs:Agency")
 public class Agency {
 	@XmlAttribute(name = "agency_id")
 	private String agencyId;

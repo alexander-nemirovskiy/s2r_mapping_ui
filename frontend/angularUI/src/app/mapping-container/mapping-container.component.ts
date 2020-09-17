@@ -1,5 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { SubSink } from 'subsink';
+
 import { MappingNotifierService } from '../services/mapping-notifier.service';
 import { LoggerService } from '../services/logger.service';
 import { MappingService } from '../services/mapping.service';
@@ -11,12 +12,13 @@ import { MappingPair } from '../models/MappingPair';
   styleUrls: ['./mapping-container.component.scss']
 })
 export class MappingContainerComponent implements OnInit, OnDestroy {
-    visible = false;
-    mappings$: Observable<MappingPair[]>;
-    confirmedItems: MappingPair[] = [];
-    confirmedItemsSub: Subscription;
+    @Output() finalizeMapping: EventEmitter<any> = new EventEmitter();
 
-    private visibility: Subscription;
+    visible = false;
+    localMappings: MappingPair[];
+    confirmedItems: MappingPair[] = [];
+    
+    private subs: SubSink = new SubSink();
 
     constructor(
         private mappingService: MappingService,
@@ -24,32 +26,48 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
         private logger: LoggerService) { }
 
     ngOnInit(): void {
-        this.visibility = this.notifier.notification.subscribe(
-            message => {
-                this.visible = message;
-                this.logger.log('Notification received');
-                if (message) {
-                    this.mappings$ = this.mappingService.startMapping();
+        this.subs.add(
+            this.notifier.notification$.subscribe(
+                message => {
+                    if(message) {
+                        this.visible = message;
+                        this.logger.log('Notification received');
+                        this.localMappings = null;
+                        if (message) {
+                            this.subs.add(this.mappingService.startMapping().subscribe(
+                                items => { this.localMappings = items; }
+                            ));
+                        }
+                    }
                 }
-            }
-        );
-        this.confirmedItemsSub = this.mappingService.confirmedPairs$.subscribe(
-            (pair: MappingPair) => {
-                this.confirmedItems.push(pair);
-            }
+            ),
+            this.mappingService.confirmedPairs$.subscribe(
+                (pair: MappingPair) => {
+                    this.confirmedItems.push(pair);
+                }
+            )
         );
     }
 
     finalizeChoice(){
-        this.mappingService.finalizeMappings(this.confirmedItems).subscribe(
-            data => {alert(data)},
-            error => {alert(error)}
+        this.subs.add(this.mappingService.finalizeMappings(this.confirmedItems)
+            .subscribe(
+                data => {
+                    this.finalizeMapping.emit(this);
+                    this.logger.log('Confirmation choices received. Ready to delete')
+                },
+                error => {alert(error)}
+            )
         );
     }
 
+    dismissChild($event: MappingPair){
+        this.localMappings = this.localMappings.filter(x => x.sourceTerm !== $event.sourceTerm);
+    }
+
     ngOnDestroy(): void {
-        this.visibility.unsubscribe();
-        this.confirmedItemsSub.unsubscribe();
+        this.subs.unsubscribe();
+        this.logger.log(`Destroy call made for component ${this}`);
     }
 
 }
