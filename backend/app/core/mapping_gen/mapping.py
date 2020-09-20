@@ -20,4 +20,4 @@ def start_mapping(sourcefile, targetfile, number=3):
 
     # counting pairmatch instances
     finaloutput = CountMatchcomp()
-    # return finaloutput
+    return finaloutput

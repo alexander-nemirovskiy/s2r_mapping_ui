@@ -65,6 +65,9 @@ export class FileSelectComponent implements OnInit {
             this.resetForm();
             this.notifier.notify();
         }
+        // this.logger.log('Invoking mapping notification');
+        //     this.resetForm();
+        //     this.notifier.notify();
     }
 
     private resetForm(){
