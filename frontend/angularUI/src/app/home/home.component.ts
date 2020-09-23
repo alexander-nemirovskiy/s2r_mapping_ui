@@ -30,9 +30,8 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.sub = this.notifier.notification$.subscribe(
             message => {
                 if (message && !this.showMappingChild) {
-                    console.dir(`Dir child component:\n${this.mappingContainer}`);
+                    this.logger.dir(`Dir child component:\n${this.mappingContainer}`);
                     this.showMappingChild = true;
-                    // this.mappingContainer.ngOnInit();
                 }
             }
         );
@@ -40,8 +39,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     onEndMapping($event) {
         this.logger.warn('Destroying component');
-        console.dir($event);
-        // this.mappingContainer.ngOnDestroy();
         this.showMappingChild = false;
     }
 

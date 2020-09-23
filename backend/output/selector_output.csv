@@ -1,2 +1,3 @@
 source_term,mapped_term,confidence_score
-Agency,agency,100
+Agency,agencies,100
+CalendarDateRule,fare_rule,100

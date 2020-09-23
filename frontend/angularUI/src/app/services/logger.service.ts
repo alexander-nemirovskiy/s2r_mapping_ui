@@ -13,6 +13,12 @@ export class LoggerService {
             console.log(msg);
         }
     }
+    
+    dir(msg: any)   {
+        if (!environment.production){
+            console.dir(msg);
+        }
+    }
 
     error(msg: any) { console.error(msg); }
     warn(msg: any)  { console.warn(msg); }

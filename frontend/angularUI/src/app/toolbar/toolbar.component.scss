@@ -1,0 +1,26 @@
+mat-toolbar-row {
+    align-content: center;
+    justify-content: flex-start;
+    background-color: #fafafa;
+    padding: 0;
+
+    > span {
+        flex: 1 1 auto;
+        color: black;
+        padding-left: 2vw;
+        
+        &:first-child {
+            padding-left: 5vw;
+        }
+
+        > img {
+            max-height: 40px;
+        }
+
+        &.spacer {
+            flex: 5 1 100px;
+            justify-self: flex-end;
+            min-height: 20px;
+        }
+    }
+}
