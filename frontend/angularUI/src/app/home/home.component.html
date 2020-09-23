@@ -1,4 +1,5 @@
 <div class="flex-container column">
     <file-manager></file-manager>
-    <mapping-container></mapping-container>
+    <mapping-container *ngIf="showMappingChild" (finalizeMapping)="onEndMapping($event)"></mapping-container>
+    <mapping-download *ngIf="!showMappingChild"></mapping-download>
 </div>

@@ -23,7 +23,7 @@ export class MappingService {
             'source_filename': 'gtfs.ttl',
             'target_filename': 'gtfs.ttl'
         }
-        return this.http.get<object[]>(mappingURL, { params: param })
+        return this.http.get<object>(mappingURL, { params: param })
             .pipe(
                 tap(() => this.logger.log('Mapping done')),
                 catchError( err => {
@@ -32,9 +32,11 @@ export class MappingService {
                     return throwError(message);
                 }),
                 map((data) => {
+                    localStorage.setItem('file_id', data['file_id'])
+                    let dataPairs: object = data['pairs']
                     let ret: MappingPair[] = []
-                    Object.keys(data).forEach(key => {
-                        const element = new MappingPair(key,data[key]);
+                    Object.keys(dataPairs).forEach(key => {
+                        const element = new MappingPair(key,dataPairs[key]);
                         ret.push(element)
                     });
                     return ret;
@@ -48,13 +50,11 @@ export class MappingService {
 
     finalizeMappings(pairs: MappingPair[]){
         const confirmedPairs = pairs.map(p => {
-            let v = p.sourceTerm;
-            let t = p.mappingOptions[0];
-            return { [v]: t };
+            return { [p.sourceTerm]: p.mappingOptions[0] };
         })
         this.logger.warn(`Just checking: ${confirmedPairs}`);
-            
-        return this.http.post(mappingURL + '/pairs', confirmedPairs)
+        let file_id = localStorage.getItem('file_id');
+        return this.http.post(mappingURL + '/pairs', { confirmedPairs: confirmedPairs, file_id: file_id})
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),
                 catchError( err => {

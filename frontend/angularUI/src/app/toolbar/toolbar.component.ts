@@ -1,20 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-toolbar',
-  template: `
-    <p>
-      toolbar works!
-    </p>
-  `,
-  styles: [
-  ]
+    selector: 'toolbar',
+    templateUrl: './toolbar.component.html',
+    styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent implements OnInit {
 
-  constructor() { }
+    constructor() { }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
 
 }

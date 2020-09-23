@@ -1,16 +1,14 @@
 # finding similarity for list of words within model, number = topmost example 10, 20 etc
 def getSimilarWordsAndVec(inputList, model, number):
     similarWordDict = {}
-    # for i in range(0,10):
     for i in range(0, len(inputList)):
         s = model.most_similar(inputList[i], topn=number)
-        similarWordDict[inputList[i]] = (s)
+        similarWordDict[inputList[i]] = s
     return similarWordDict
 
 
 def getSimilarWordsSingle(inputList, model, number):
     similarWordList = []
-    # for word in range(0,10):
     for word in range(0, len(inputList)):
         s = model.most_similar(inputList[word], topn=number)
         tmpl = [inputList[word]]
@@ -22,7 +20,6 @@ def getSimilarWordsSingle(inputList, model, number):
 
 def getSimilarWordsCompound(inputList, model, number):
     similarWordList = []
-    # for word in range(0,10):
     for word in range(0, len(inputList)):
         s = model.most_similar(inputList[word], topn=number)
         tmpl = [inputList[word]]

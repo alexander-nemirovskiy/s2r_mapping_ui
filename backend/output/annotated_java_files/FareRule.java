@@ -1,5 +1,6 @@
 package com.example.jaxb.generated;
 
+@RdfsClass("gtfs:CalendarDateRule")
 public class FareRule {
 	@XmlSchemaType(name = "unsignedByte")
 	@XmlAttribute(name = "fare_id", required = true)

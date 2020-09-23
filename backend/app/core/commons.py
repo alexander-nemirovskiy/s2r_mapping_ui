@@ -23,6 +23,11 @@ class OkResponse(BaseModel):
     message: Optional[str] = ''
 
 
+class MappingPairsResponse(BaseModel):
+    file_id: str
+    pairs: dict
+
+
 async def http_error_handler(request: Request, exc: API_Exception) -> JSONResponse:
     return JSONResponse(status_code=HTTP_400_BAD_REQUEST,
                         content={'detail': {'code': exc.error_code, 'message': exc.message}})

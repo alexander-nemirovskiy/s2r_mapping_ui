@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatRadioChange, } from '@angular/material/radio';
 import { MappingPair } from '../models/MappingPair';
@@ -12,6 +12,7 @@ import { MappingService } from '../services/mapping.service';
 })
 export class MappingSelectorComponent implements OnInit {
     @Input() mappingPair: MappingPair;
+    @Output() dismissEvent: EventEmitter<any> = new EventEmitter();
 
     private _custom_option = "";
     private selected_option = "";
@@ -41,24 +42,27 @@ export class MappingSelectorComponent implements OnInit {
     confirmMapping(){
         let value = this.selector_form.controls['mapping_options'].value
         if (this.isValid){
-            let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, []);
+            let v = ''
             if(value === "other"){
-                this.logger.log(`Form value: ${this._custom_option}`)
-                m.mappingOptions.push(this._custom_option);
+                v = this._custom_option;
+                // this.logger.log(`Form value: ${this._custom_option}`)
+                // m.mappingOptions.push(this._custom_option);
             }
             else {
-                this.logger.log(`Form value: ${value}`);
-                m.mappingOptions.push(value);
+                v = value;
+                // this.logger.log(`Form value: ${value}`);
+                // m.mappingOptions.push(value);
             }
+            let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, [v]);
             this.mappingService.confirmMappingPair(m);
-            this.logger.warn('Selection performed');
-            this.showSelector = false;
+            this.logger.log(`Selection performed: [${v}]`);
+            this.dismissEvent.emit(this.mappingPair);
         }
     }
 
     deleteMapping(){
         this.logger.log(`Option ${this.mappingPair.sourceTerm} was rejected.`);
-        this.showSelector = false;
+        this.dismissEvent.emit(this.mappingPair);
     }
 
     isValid(): boolean{

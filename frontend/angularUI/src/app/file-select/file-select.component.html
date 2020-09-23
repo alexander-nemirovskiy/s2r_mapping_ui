@@ -9,8 +9,11 @@
     </mat-step>
     <mat-step #source_file_select [stepControl]="sourceFormGroup" errorMessage="A file is required.">
         <form [formGroup]="sourceFormGroup">
-            <ng-template matStepLabel>Select a source file</ng-template>
-            <mat-label>Please select a file to map</mat-label>
+            <ng-template matStepLabel>Select a source xsd file</ng-template>
+            <mat-label>
+                <p>Please select an xsd file</p>
+                <p>If you cannot find your file here try uploading one.</p>
+            </mat-label>
             <mat-radio-group class="flex-container column"
                  formControlName="sourceFileControl" required>
                 <mat-radio-button *ngFor="let file of sourceFiles$ | async" [value]="file">
@@ -24,8 +27,11 @@
     </mat-step>
     <mat-step #target_file_select [stepControl]="targetFormGroup" errorMessage="A file is required.">
         <form [formGroup]="targetFormGroup">
-            <ng-template matStepLabel>Select a target file</ng-template>
-            <mat-label>Please select a file to map</mat-label>
+            <ng-template matStepLabel>Select an ontology file</ng-template>
+            <mat-label>
+                <p>Please select an ontology file</p>
+                <p>If you cannot find your file here try uploading one.</p>
+            </mat-label>
             <mat-radio-group class="flex-container column"
                  formControlName="targetFileControl" required>
                 <mat-radio-button *ngFor="let file of targetFiles$ | async" [value]="file">

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
@@ -7,7 +7,7 @@ from pandas import DataFrame
 from starlette import status
 from starlette.responses import JSONResponse
 
-from ....core.commons import API_Exception, ErrorCode, OkResponse
+from ....core.commons import ErrorCode, OkResponse, MappingPairsResponse
 from ....core.orchestrator import generate_mapping_pairs, generate_annotations
 from ....utils.file_management import save_upload_file, retrieve_upload_files_by_extension, \
     retrieve_upload_file_by_filename
@@ -42,7 +42,7 @@ async def get_file_by_name(
     return FileResponse(location, media_type='application/octet-stream', filename=filename)
 
 
-@router.get("/mapping")
+@router.get("/mapping", response_model=MappingPairsResponse)
 async def generate_mapping(
         source_filename: str,
         target_filename: str
@@ -64,9 +64,12 @@ async def generate_mapping(
             # TODO remove hardcoded variables, add paths instead of names
             # source: str = 'it.owl'
             # target = 'Connection.xsd'
-            res = await generate_mapping_pairs(source_file.name, target_file.name)
-            gb = res.groupby('source_term')['mapped_term'].apply(list).to_dict()
-            return JSONResponse(content=gb)
+            name_id, pairs = await generate_mapping_pairs(source_file, target_file)
+            # gb = res.groupby('source_term')['mapped_term'].apply(list).to_dict()
+            p = MappingPairsResponse(file_id=name_id, pairs=pairs)
+            # p.file_id = name_id
+            # p.pairs = pairs
+            return p
 
 
 @router.get("/mapping/autoselect", response_model=OkResponse)
@@ -88,9 +91,9 @@ async def autogenerate_mapping(
                 detail=ErrorCode.GENERIC,
             )
         else:
-            source: str = 'it.owl'
-            target = 'Connection.xsd'
-            res: DataFrame = await generate_mapping_pairs(source, target)
+            # source: str = 'it.owl'
+            # target = 'Connection.xsd'
+            res: DataFrame = await generate_mapping_pairs(source_file, target_file)
             await generate_annotations(res, True)
             return {'task_completed': True, 'message': 'mapping completed'}
 
@@ -103,7 +106,8 @@ def extract_pair(obj: Dict[str, str]):
 
 @router.post("/mapping/pairs", response_model=OkResponse)
 async def confirm_mappings(
-        confirmedPairs: List[Dict[str, str]]
+        confirmedPairs: List[Dict[str, str]],
+        file_id: str
 ):
     if not confirmedPairs:
         raise HTTPException(
@@ -115,5 +119,5 @@ async def confirm_mappings(
         # cleaned_df = DataFrame(list(zip(in_keys, in_vals)), columns=['source_term', 'mapped_term'])
         cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term'])
         cleaned_df['confidence_score'] = 100
-        await generate_annotations(cleaned_df, False)
+        await generate_annotations(cleaned_df, False, file_id)
         return {'task_completed': True, 'message': 'mapping completed'}

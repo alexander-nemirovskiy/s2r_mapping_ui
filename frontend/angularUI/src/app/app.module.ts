@@ -17,6 +17,7 @@ import { MappingSelectorComponent } from './mapping-selector/mapping-selector.co
 import { FileManagerComponent } from './file-manager/file-manager.component';
 import { FileSelectComponent } from './file-select/file-select.component';
 import { MappingContainerComponent } from './mapping-container/mapping-container.component';
+import { MappingDownloadComponent } from './mapping-download/mapping-download.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { MappingContainerComponent } from './mapping-container/mapping-container
     MappingSelectorComponent,
     MappingContainerComponent,
     FileManagerComponent,
-    FileSelectComponent
+    FileSelectComponent,
+    MappingDownloadComponent
   ],
   imports: [
     BrowserModule,
