@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  API_Endpoint: 'http://127.0.0.1:5050/api/v1'
+//   API_Endpoint: 'http://127.0.0.1:5050/api/v1'
+  API_Endpoint: 'http://planetlab2.elet.polimi.it:8080/api/v1'
 };
 
 /*

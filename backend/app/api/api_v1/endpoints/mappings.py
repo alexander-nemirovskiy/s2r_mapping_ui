@@ -66,10 +66,7 @@ async def generate_mapping(
             # target = 'Connection.xsd'
             name_id, pairs = await generate_mapping_pairs(source_file, target_file)
             # gb = res.groupby('source_term')['mapped_term'].apply(list).to_dict()
-            p = MappingPairsResponse(file_id=name_id, pairs=pairs)
-            # p.file_id = name_id
-            # p.pairs = pairs
-            return p
+            return MappingPairsResponse(file_id=name_id, pairs=pairs)
 
 
 @router.get("/mapping/autoselect", response_model=OkResponse)
@@ -93,8 +90,8 @@ async def autogenerate_mapping(
         else:
             # source: str = 'it.owl'
             # target = 'Connection.xsd'
-            res: DataFrame = await generate_mapping_pairs(source_file, target_file)
-            await generate_annotations(res, True)
+            name_id, res = await generate_mapping_pairs(source_file, target_file)
+            await generate_annotations(res, True, name_id)
             return {'task_completed': True, 'message': 'mapping completed'}
 
 
@@ -116,7 +113,6 @@ async def confirm_mappings(
         )
     else:
         val = list(map(extract_pair, confirmedPairs))
-        # cleaned_df = DataFrame(list(zip(in_keys, in_vals)), columns=['source_term', 'mapped_term'])
         cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term'])
         cleaned_df['confidence_score'] = 100
         await generate_annotations(cleaned_df, False, file_id)

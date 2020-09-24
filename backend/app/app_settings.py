@@ -35,3 +35,5 @@ write_pathVecOrgThr = 'SumVecOrgThr'
 
 MAPPING_OUTPUT_FILE = 'mapping_results_'
 SELECTOR_OUTPUT_FILE = 'selector_'
+SOURCE_FILE = 'source'
+TARGET_FILE = 'target'

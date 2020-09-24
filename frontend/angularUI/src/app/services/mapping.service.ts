@@ -18,16 +18,17 @@ export class MappingService {
 
     constructor(private http: HttpClient, private logger: LoggerService) {}
 
-    startMapping(): Observable<MappingPair[]> {
-        let param = {
-            'source_filename': 'gtfs.ttl',
-            'target_filename': 'gtfs.ttl'
+    startMapping(sourceName: string, targetName: string): Observable<MappingPair[]> {
+        const param = {
+            'source_filename': sourceName,
+            'target_filename': targetName
         }
         return this.http.get<object>(mappingURL, { params: param })
             .pipe(
                 tap(() => this.logger.log('Mapping done')),
                 catchError( err => {
-                    this.logger.error('GET failed: ' + err);
+                    this.logger.error('MAPPING PROCESS failed: ' + err);
+                    this.logger.dir(err)
                     const message = 'Sorry, GET mapping failed!';
                     return throwError(message);
                 }),
@@ -54,11 +55,12 @@ export class MappingService {
         })
         this.logger.warn(`Just checking: ${confirmedPairs}`);
         let file_id = localStorage.getItem('file_id');
-        return this.http.post(mappingURL + '/pairs', { confirmedPairs: confirmedPairs, file_id: file_id})
+        return this.http.post(mappingURL + '/pairs', { confirmedPairs: confirmedPairs, file_id: file_id })
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),
                 catchError( err => {
-                    this.logger.error('POST failed: ' + err);
+                    this.logger.error('Finalize mappings failed: ' + err);
+                    this.logger.dir(err);
                     const message = 'Sorry, POST pair confirmation failed!';
                     return throwError(message);
                 })

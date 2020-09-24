@@ -29,15 +29,14 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
         this.subs.add(
             this.notifier.notification$.subscribe(
                 message => {
-                    if(message) {
-                        this.visible = message;
-                        this.logger.log('Notification received');
-                        this.localMappings = null;
-                        if (message) {
-                            this.subs.add(this.mappingService.startMapping().subscribe(
-                                items => { this.localMappings = items; }
-                            ));
-                        }
+                    this.visible = message ? true: false;
+                    // this.visible = true;
+                    this.logger.log('Notification received');
+                    this.localMappings = null;
+                    if (message && message.sourceName && message.targetName) {
+                        this.subs.add(this.mappingService.startMapping(message.sourceName, message.targetName).subscribe(
+                            items => { this.localMappings = items; }
+                        ));
                     }
                 }
             ),
