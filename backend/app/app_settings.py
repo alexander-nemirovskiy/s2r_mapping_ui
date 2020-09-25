@@ -11,7 +11,8 @@ OUTPUT_FOLDER = 'output'
 UPLOAD_FOLDER = 'uploads'
 INPUT_FOLDER = 'input'
 MAPPING_FOLDER = 'mapping'
-CLEANED_FILE_FOLDER = 'cleaner'
+CLEANED_FOLDER = 'cleaner'
+SELECTOR_FOLDER = 'selector'
 
 # external model location
 EXT_MODEL_LOCATION = 'uploads/GoogleNews-vectors-negative300.bin'

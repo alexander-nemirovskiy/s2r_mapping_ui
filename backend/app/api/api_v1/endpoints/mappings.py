@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
@@ -7,8 +7,8 @@ from pandas import DataFrame
 from starlette import status
 from starlette.responses import JSONResponse
 
-from ....core.commons import ErrorCode, OkResponse, MappingPairsResponse
-from ....core.orchestrator import generate_mapping_pairs, generate_annotations
+from ....core.commons import ErrorCode, OkResponse, MappingPairsResponse, MappingPairsRequest
+from ....core.orchestrator import generate_mapping_pairs, generate_annotations, get_zip_location
 from ....utils.file_management import save_upload_file, retrieve_upload_files_by_extension, \
     retrieve_upload_file_by_filename
 from ....app_settings import ALLOWED_INPUT_EXTENSIONS, ALLOWED_ONTOLOGY_EXTENSIONS
@@ -33,13 +33,13 @@ def get_filenames(extension: str = ''):
 
 
 @router.get("/files/{filename}")
-async def get_file_by_name(
+async def get_annotated_file_zip(
         filename: str
 ):
-    location = ''
-    # TODO stub
+    location = await get_zip_location(filename)
     # may also be application/blob
-    return FileResponse(location, media_type='application/octet-stream', filename=filename)
+    # return FileResponse(location, media_type='application/octet-stream', filename=filename)
+    return FileResponse(str(location), media_type='application/zip')
 
 
 @router.get("/mapping", response_model=MappingPairsResponse)
@@ -61,11 +61,7 @@ async def generate_mapping(
                 detail=ErrorCode.GENERIC,
             )
         else:
-            # TODO remove hardcoded variables, add paths instead of names
-            # source: str = 'it.owl'
-            # target = 'Connection.xsd'
             name_id, pairs = await generate_mapping_pairs(source_file, target_file)
-            # gb = res.groupby('source_term')['mapped_term'].apply(list).to_dict()
             return MappingPairsResponse(file_id=name_id, pairs=pairs)
 
 
@@ -101,19 +97,18 @@ def extract_pair(obj: Dict[str, str]):
     return k, v
 
 
-@router.post("/mapping/pairs", response_model=OkResponse)
+@router.post("/mapping/pairs")
 async def confirm_mappings(
-        confirmedPairs: List[Dict[str, str]],
-        file_id: str
+        confirmedPairs: MappingPairsRequest
 ):
-    if not confirmedPairs:
+    if not (confirmedPairs and confirmedPairs.pairs and confirmedPairs.file_id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorCode.MISSING_PARAMS,
         )
     else:
-        val = list(map(extract_pair, confirmedPairs))
+        val = list(map(extract_pair, confirmedPairs.pairs))
         cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term'])
         cleaned_df['confidence_score'] = 100
-        await generate_annotations(cleaned_df, False, file_id)
+        await generate_annotations(cleaned_df, False, confirmedPairs.file_id)
         return {'task_completed': True, 'message': 'mapping completed'}

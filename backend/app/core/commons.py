@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
 from starlette.requests import Request
@@ -26,6 +26,11 @@ class OkResponse(BaseModel):
 class MappingPairsResponse(BaseModel):
     file_id: str
     pairs: dict
+
+
+class MappingPairsRequest(BaseModel):
+    file_id: str
+    pairs: List[dict]
 
 
 async def http_error_handler(request: Request, exc: API_Exception) -> JSONResponse:

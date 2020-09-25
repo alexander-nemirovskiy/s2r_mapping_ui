@@ -67,6 +67,12 @@ export class FileService {
         // return the map of progress.observables
         return status;
     }
+
+    public download_annotated_files(file_id: string){
+        return this.http.get(filesURL + '/' + file_id, {
+            responseType: 'arraybuffer'
+          });
+    }
     
     
 }

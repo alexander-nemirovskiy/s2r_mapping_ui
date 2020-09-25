@@ -1,7 +1,7 @@
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { LoggerService } from './logger.service';
 import { environment } from './../../environments/environment';
@@ -50,12 +50,21 @@ export class MappingService {
     }
 
     finalizeMappings(pairs: MappingPair[]){
-        const confirmedPairs = pairs.map(p => {
+        const confirmedPairs: object[] = pairs.map(p => {
             return { [p.sourceTerm]: p.mappingOptions[0] };
         })
+        
         this.logger.warn(`Just checking: ${confirmedPairs}`);
-        let file_id = localStorage.getItem('file_id');
-        return this.http.post(mappingURL + '/pairs', { confirmedPairs: confirmedPairs, file_id: file_id })
+        this.logger.dir(confirmedPairs);
+        let f_id: string = localStorage.getItem(environment.FILE_ID);
+        let body = JSON.stringify({ "file_id":  f_id, "pairs": confirmedPairs})
+        let options = { 
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json' 
+            }),
+        };
+        // return this.http.post(mappingURL + '/pairs', { confirmedPairs: confirmedPairs, file_id: file_id }, options)
+        return this.http.post(mappingURL + '/pairs', body)
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),
                 catchError( err => {
