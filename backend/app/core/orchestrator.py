@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import shutil
+import subprocess
 from concurrent.futures.thread import ThreadPoolExecutor
 from pathlib import Path
 from time import sleep, time
@@ -15,7 +16,7 @@ from .w2v_2_java_annotation_pipeline.Step_1_cleaner_selector import cleaner, sel
 from .w2v_2_java_annotation_pipeline.Step_2_type_identification_to_java_annotating \
     import type_identifier_to_java_annotator
 from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR_OUTPUT_FILE, SOURCE_FILE, TARGET_FILE, \
-    MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER
+    MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, UPLOAD_FOLDER
 
 
 async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[str, DataFrame]:
@@ -24,18 +25,41 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     filename_uuid: str = str(uuid4()).split('-')[0]
     start_time = time()
     # with ThreadPoolExecutor() as pool:
-        # TODO substitute with actual library call
-        # filename_uuid: str = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
-        # created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
-        # logging.info('Created file: ' + created_filename)
+    # TODO substitute with actual library call
+    # filename_uuid: str = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+    # created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
+    # logging.info('Created file: ' + created_filename)
     filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
     logging.info("Mapping process completed in: --- %s seconds ---" % (time() - start_time))
+    input_folder = Path.cwd().joinpath(INPUT_FOLDER)
+
     # copy files to input location for userid
     try:
-        input_location = Path.cwd().joinpath(INPUT_FOLDER, filename_uuid)
+        input_location = input_folder.joinpath(filename_uuid)
         input_location.mkdir(parents=True)
         shutil.copyfile(source_file, input_location.joinpath(SOURCE_FILE))
         shutil.copyfile(target_file, input_location.joinpath(TARGET_FILE))
+        # TODO temp test: change to actual source file
+        s_file = Path.cwd().joinpath(UPLOAD_FOLDER, 'example.xsd')
+        # command = ' '.join(['java', '-jar', str(input_folder.joinpath(JAR_NAME)),
+        #                     JAR_INPUT_PARAM, str(source_file), JAR_OUTPUT_PARAM,
+        #                     str(input_location)])
+        command = ' '.join(['java', '-jar', str(input_folder.joinpath(JAR_NAME)),
+                            JAR_INPUT_PARAM, str(s_file), JAR_OUTPUT_PARAM,
+                            str(input_location)])
+
+        proc = await asyncio.create_subprocess_shell(command,
+                                                     stdin=asyncio.subprocess.PIPE,
+                                                     stdout=asyncio.subprocess.PIPE,
+                                                     stderr=asyncio.subprocess.STDOUT
+                                                     )
+        stdout, stderr = await proc.communicate()
+
+        print(f'[{command!r} exited with {proc.returncode}]')
+        if stdout:
+            logging.info(f'[stdout]\n{stdout.decode()}')
+        if stderr:
+            logging.error(f'[stderr]\n{stderr.decode()}')
     except Exception as e:
         logging.warning('Exception during user input folder creation: ' + str(e))
         raise API_Exception(ErrorCode.GENERIC, 'Temp file folder creation failed')
