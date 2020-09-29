@@ -6,7 +6,7 @@
 	xmlns:infrastructure="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure"
 	targetNamespace="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure" elementFormDefault="qualified">
 	
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="../Common/Common.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="Common.xsd"/>
 	
 	<xsd:complexType name="GeoPoint">	
 		<xsd:complexContent>

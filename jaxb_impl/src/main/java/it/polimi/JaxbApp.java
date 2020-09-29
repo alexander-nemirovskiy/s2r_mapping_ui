@@ -1,11 +1,6 @@
 package it.polimi;
 
-//import com.sun.codemodel.JCodeModel;
-//import com.sun.tools.xjc.ConsoleErrorReporter;
-//import com.sun.tools.xjc.api.S2JJAXBModel;
-//import com.sun.tools.xjc.api.SchemaCompiler;
-//import com.sun.tools.xjc.api.XJC;
-//import org.apache.cxf.common.jaxb.JAXBUtils;
+import com.sun.tools.xjc.api.ErrorListener;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
@@ -14,18 +9,13 @@ import org.xml.sax.InputSource;
 import org.apache.commons.cli.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.net.URL;
-import java.nio.file.Paths;
-
-//import com.sun.tools.jxc.*;
-import com.sun.tools.jxc.*;
-import com.sun.xml.bind.*;
 import com.sun.codemodel.*;
+import org.xml.sax.SAXParseException;
 
 
 public class JaxbApp
 {
-    public static void main( String[] args ) throws Exception {
+    public static void main( String[] args ) {
         System.out.println("Starting generation...");
         Options options = new Options();
 
@@ -74,8 +64,29 @@ public class JaxbApp
     public static void generateFromSchema(String xsdSchemaPath, String outputFolderPath) throws Exception {
         // Setup schema compiler
         SchemaCompiler sc = XJC.createSchemaCompiler();
-//        SchemaCompiler sc = JAXBUtils.createSchemaCompiler();
-//        sc.forcePackageName("java_classes");
+        sc.setErrorListener(new ErrorListener() {
+            @Override
+            public void error(SAXParseException e) {
+                e.printStackTrace();
+
+            }
+
+            @Override
+            public void fatalError(SAXParseException e) {
+
+            }
+
+            @Override
+            public void warning(SAXParseException e) {
+
+            }
+
+            @Override
+            public void info(SAXParseException e) {
+
+            }
+
+        });
 
         // Setup SAX InputSource
         File schemaFile = new File(xsdSchemaPath);
@@ -89,11 +100,7 @@ public class JaxbApp
         if (model == null){
             throw new Exception("No model has been generated!");
         }
-//
-//        com.sun. jCodeModel = model.generateCode(null, null);
-//        jCodeModel.build(new File(outputFolderPath));
         final JCodeModel jcm = model.generateCode(null, null);
         jcm.build(new File(outputFolderPath));
-//        setPackageName(find_URI(schemaFile));
     }
 }

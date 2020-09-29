@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by SNCF  VFE-SIV (SNCF  VFE-SIV) -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:common="http://domainmodel.pts_fsm.org/2015/10/29/common" xmlns:connection="http://domainmodel.pts_fsm.org/2015/10/29/connection" xmlns:transportation="http://domainmodel.pts_fsm.org/2015/10/29/transportation" xmlns:infrastructure="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure" xmlns:journeyplan="http://domainmodel.pts_fsm.org/2015/10/29/journeyplan" targetNamespace="http://domainmodel.pts_fsm.org/2015/10/29/journeyplan" elementFormDefault="qualified">
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="./Common.xsd"/>
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/connection" schemaLocation="./Connection.xsd"/>
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/transportation" schemaLocation="./Transportation.xsd"/>
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure" schemaLocation="./Infrastructure.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="Common.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/connection" schemaLocation="Connection.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/transportation" schemaLocation="Transportation.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure" schemaLocation="Infrastructure.xsd"/>
 
 
 	<xsd:complexType name="Itinerary">

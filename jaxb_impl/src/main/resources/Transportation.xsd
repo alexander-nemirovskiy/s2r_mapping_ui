@@ -6,7 +6,7 @@
 	xmlns:transportation="http://domainmodel.pts_fsm.org/2015/10/29/transportation" 
 	targetNamespace="http://domainmodel.pts_fsm.org/2015/10/29/transportation" elementFormDefault="qualified">
 	
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="./Common.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="Common.xsd"/>
 
 	<xsd:complexType name="Vehicle">
 		<xsd:complexContent>

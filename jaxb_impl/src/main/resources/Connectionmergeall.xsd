@@ -1,4 +1,5 @@
-<xsd:schema
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema 
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:common="http://domainmodel.pts_fsm.org/2015/10/29/common"
 	xmlns:infrastructure="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure"
@@ -7,10 +8,10 @@
 	xmlns:connection="http://domainmodel.pts_fsm.org/2015/10/29/connection"
 	targetNamespace="http://domainmodel.pts_fsm.org/2015/10/29/connection" elementFormDefault="qualified">
 	
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="./Common.xsd"/>
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure" schemaLocation="./Infrastructure.xsd"/>
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/journeyplan" schemaLocation="./JourneyPlan.xsd"/>
-	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/transportation" schemaLocation="./Transportation.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/common" schemaLocation="Common.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/infrastructure" schemaLocation="Infrastructure.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/journeyplan" schemaLocation="JourneyPlan.xsd"/>
+	<xsd:import namespace="http://domainmodel.pts_fsm.org/2015/10/29/transportation" schemaLocation="Transportation.xsd"/>
 
 	<xsd:complexType name="ChangePoint">
 		<xsd:complexContent>

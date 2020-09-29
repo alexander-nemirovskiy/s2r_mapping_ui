@@ -224,3 +224,4 @@ dmypy.json
 /frontend/angularUI/.vscode/
 /backend/output
 /backend/uploads
+jaxb_impl/src/main/resources/
