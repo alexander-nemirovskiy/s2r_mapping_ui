@@ -14,25 +14,20 @@ from .w2v_2_java_annotation_pipeline.Step_1_cleaner_selector import cleaner, sel
 from .w2v_2_java_annotation_pipeline.Step_2_type_identification_to_java_annotating \
     import type_identifier_to_java_annotator
 from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR_OUTPUT_FILE, SOURCE_FILE, TARGET_FILE, \
-    MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM
-
+    MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
 
 logger = logging.getLogger('core-executor')
 orchestrator_lock = asyncio.Lock()
+executor = ProcessPoolExecutor(max_workers=WORKER_NUM)
 
 
-async def process_xsd_input(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
+async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
     logging.info('Creating folder setup')
     input_location = input_folder.joinpath(filename_uuid)
     input_location.mkdir(parents=True)
     logging.info('Copying files to required location')
     copyfile(source_file, input_location.joinpath(SOURCE_FILE))
     copyfile(target_file, input_location.joinpath(TARGET_FILE))
-    # TODO temp test: change to actual source file
-    # s_file = Path.cwd().joinpath(UPLOAD_FOLDER, 'example.xsd')
-    # command = ' '.join(['java', '-jar', str(input_folder.joinpath(JAR_NAME)),
-    #                     JAR_INPUT_PARAM, str(s_file), JAR_OUTPUT_PARAM,
-    #                     str(input_location)])
     logging.info('Executing java command in separate shell')
     command = ' '.join(['java', '-jar', str(input_folder.joinpath(JAR_NAME)),
                         JAR_INPUT_PARAM, str(source_file), JAR_OUTPUT_PARAM,
@@ -64,21 +59,18 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
     try:
-        logger.info('Waiting for orchestrator lock')
-        async with orchestrator_lock:
-            logger.info('Entered orchestrator lock')
-            # simple_task = await process_xsd_input(input_folder, filename_uuid, source_file, target_file)
-            await process_xsd_input(input_folder, filename_uuid, source_file, target_file)
-            logger.info('Created xsd task')
-            loop = asyncio.get_running_loop()
-            logger.info('Starting executor for mapping process')
-            # with ProcessPoolExecutor(max_workers=4) as pool:
-            executor = ProcessPoolExecutor()
+        # simple_task = await process_xsd_input(input_folder, filename_uuid, source_file, target_file)
+        await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
+        logger.info('Created xsd task')
+        loop = asyncio.get_running_loop()
+        logger.info('Starting executor for mapping process')
+        with executor as pool:
             logger.info('Using executor pool')
-            await loop.run_in_executor(executor, start_mapping, source_file, target_file, filename_uuid)
+            await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
 
             # await asyncio.gather(blocking_task, simple_task)
             logger.info('Created file: ' + created_filename)
+        logger.info('Exited executor pool block')
     except Exception as e:
         logger.warning('Exception during mapping: ' + str(e))
         raise API_Exception(ErrorCode.GENERIC, 'Mapping failed')

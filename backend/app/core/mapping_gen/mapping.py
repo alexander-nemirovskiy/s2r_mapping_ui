@@ -1,4 +1,5 @@
 import logging
+import threading
 from pathlib import Path
 from time import time
 from typing import List, Any, Union
@@ -14,12 +15,12 @@ from .MatchVocab import matchWordsModel
 from .MatchPair import getValueThreshold
 from ..commons import API_Exception, ErrorCode
 
-from ...app_settings import EXT_MODEL_LOCATION, UPLOAD_FOLDER, OUTPUT_FOLDER, MAPPING_FOLDER, source_rw, target_rw, \
-    write_pathVecRaw, write_pathVecThr, write_pathVecOrgRaw, write_pathVecOrgThr, MAPPING_OUTPUT_FILE
-
+from ...app_settings import EXT_MODEL_NAME, UPLOAD_FOLDER, OUTPUT_FOLDER, MAPPING_FOLDER, source_rw, target_rw, \
+    write_pathVecRaw, write_pathVecThr, write_pathVecOrgRaw, write_pathVecOrgThr, MAPPING_OUTPUT_FILE, INPUT_FOLDER
 
 out_folder = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
 logger = logging.getLogger('mapping_generator')
+lock = threading.Lock()
 
 
 def WordMatchComp(sourcefile, targetfile, model, vocab_list, unique_file_id: str, numberofwords=3):
@@ -100,17 +101,21 @@ def CountMatchcomp(unique_file_id: str):
 
 def start_mapping(source_file: Path, target_file: Path, filename_uuid: str):
     logger.info('Loading model and extracting vocabulary list')
-    model, vocab_list = get_vocab_list(EXT_MODEL_LOCATION)
+    model_location = Path.cwd().joinpath(INPUT_FOLDER, EXT_MODEL_NAME)
 
     try:
-        logger.info('Starting mapping procedure')
-        start_time = time()
-        WordMatchComp(source_file.name, target_file.name, model, vocab_list, filename_uuid)
+        logger.info('Waiting for mapping lock')
+        with lock:
+            logger.info('Entered mapping lock')
+            logger.info('Starting mapping procedure')
+            model, vocab_list = get_vocab_list(str(model_location))
+            start_time = time()
+            WordMatchComp(source_file.name, target_file.name, model, vocab_list, filename_uuid)
 
-        MatchVectorComp(model, filename_uuid)
+            MatchVectorComp(model, filename_uuid)
 
-        CountMatchcomp(filename_uuid)
-        logger.info("Mapping procedure completed in: --- %s seconds ---" % (time() - start_time))
+            CountMatchcomp(filename_uuid)
+            logger.info("Mapping procedure completed in: --- %s seconds ---" % (time() - start_time))
     except Exception as e:
         logger.error(f'Something went wrong during mapping procedure\n{e} - {str(e)}')
         raise API_Exception(ErrorCode.GENERIC, 'Mapping process failed')

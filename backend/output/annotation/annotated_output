@@ -1,3 +1,0 @@
-ttl_term,xml_term,confidence_score,Annotation
-Agency,agencies,100,"@RdfsClass(""gtfs:Agency"")"
-CalendarDateRule,fare_rule,100,"@RdfsClass(""gtfs:CalendarDateRule"")"

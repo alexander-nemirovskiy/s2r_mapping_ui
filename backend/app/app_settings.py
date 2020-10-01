@@ -5,6 +5,7 @@ ALLOWED_HOSTS = [
     'https://127.0.0.1',
     'http://127.0.0.1:4200'
 ]
+WORKER_NUM = 8
 
 # Folder structure
 OUTPUT_FOLDER = 'output'
@@ -15,7 +16,7 @@ CLEANED_FOLDER = 'cleaner'
 SELECTOR_FOLDER = 'selector'
 
 # external model location
-EXT_MODEL_LOCATION = 'uploads/GoogleNews-vectors-negative300.bin'
+EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'
 
 ALLOWED_INPUT_EXTENSIONS = ['xml', 'xsd']
 ALLOWED_ONTOLOGY_EXTENSIONS = ['ttl', 'owl']

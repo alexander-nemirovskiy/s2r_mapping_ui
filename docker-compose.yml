@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+  s2r_api:
+    container_name: s2r_mapping_tool
+    image: s2r_img
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile
+    volumes:
+    - ./input:/s2r_mapping_tool/input
+    - ./output:/s2r_mapping_tool/output
+    - ./uploads:/s2r_mapping_tool/uploads
+    ports:
+    - "5050:5050"
+
+  nginx_ws:
+    image: nginx:latest
+    container_name: nginx_prod
+    volumes:
+      - ./reverse_proxy/s2r_mapping.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - s2r_api
