@@ -17,7 +17,6 @@ from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR
     MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
 
 logger = logging.getLogger('core-executor')
-orchestrator_lock = asyncio.Lock()
 executor = ProcessPoolExecutor(max_workers=WORKER_NUM)
 
 

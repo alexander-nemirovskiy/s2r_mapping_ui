@@ -21,11 +21,9 @@ RUN export JAVA_HOME
 
 COPY ./app /s2r_mapping_tool/app
 COPY requirements.txt /s2r_mapping_tool
-#COPY ./input/jaxb_impl-0.1.3.jar /s2r_mapping_tool/backend/input
-#COPY ./input/GoogleNews-vectors-negative300.bin /s2r_mapping_tool/backend/input
 WORKDIR /s2r_mapping_tool
 RUN pip install -r /s2r_mapping_tool/requirements.txt
 
-EXPOSE 5050
+EXPOSE 8080
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "5050"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

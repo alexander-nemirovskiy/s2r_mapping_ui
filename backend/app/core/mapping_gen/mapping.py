@@ -100,22 +100,22 @@ def CountMatchcomp(unique_file_id: str):
 
 
 def start_mapping(source_file: Path, target_file: Path, filename_uuid: str):
-    logger.info('Loading model and extracting vocabulary list')
+    logger.info('Starting mapping procedure')
     model_location = Path.cwd().joinpath(INPUT_FOLDER, EXT_MODEL_NAME)
-
     try:
         logger.info('Waiting for mapping lock')
         with lock:
             logger.info('Entered mapping lock')
-            logger.info('Starting mapping procedure')
+            logger.info('Loading model and extracting vocabulary list')
             model, vocab_list = get_vocab_list(str(model_location))
             start_time = time()
+            logger.info('Starting word matching algorithm')
             WordMatchComp(source_file.name, target_file.name, model, vocab_list, filename_uuid)
-
+            logger.info('Starting matching algorithm')
             MatchVectorComp(model, filename_uuid)
-
+            logger.info('Count resulting matches')
             CountMatchcomp(filename_uuid)
-            logger.info("Mapping procedure completed in: --- %s seconds ---" % (time() - start_time))
+            logger.info("Mapping procedure completed in: %s seconds" % (time() - start_time))
     except Exception as e:
         logger.error(f'Something went wrong during mapping procedure\n{e} - {str(e)}')
         raise API_Exception(ErrorCode.GENERIC, 'Mapping process failed')
