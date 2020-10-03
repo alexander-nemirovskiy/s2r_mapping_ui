@@ -3,7 +3,8 @@ PROJECT_NAME = "Shift2Rail"
 ALLOWED_HOSTS = [
     'http://127.0.0.1',
     'https://127.0.0.1',
-    'http://127.0.0.1:4200'
+    'http://172.18.0.1',
+    'https://172.18.0.1'
 ]
 WORKER_NUM = 8
 

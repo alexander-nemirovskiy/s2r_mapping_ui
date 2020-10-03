@@ -1,9 +1,6 @@
 .flex-container {
-    
-
     > div {
         flex: 1 2 45vw;
-        // padding-top: 1vh;
         padding-bottom: 1vh;
 
         // confirmed mappings
@@ -30,6 +27,11 @@
 
         > div {
             padding-top: 2vh;
+
+            &.content {
+                padding: 2vh 2vw;
+                text-align: center;
+            }
         }
 
         > #loadingContainer {
@@ -41,3 +43,4 @@
         }
     }
 }
+

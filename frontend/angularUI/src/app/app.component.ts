@@ -7,7 +7,7 @@ import { Title } from '@angular/platform-browser';
   styleUrls: [ './app.component.scss' ]
 })
 export class AppComponent{
-    title = 'Sprint Mapping Tool';
+    title = 'Smart';
 
     public constructor (private titleService: Title){
         this.setTitle(this.title);

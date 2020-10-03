@@ -8,12 +8,13 @@ services:
       context: ./backend/app
       dockerfile: Dockerfile
     network_mode: bridge
+    restart: always
     volumes:
     - ./input:/s2r_mapping_tool/input
     - ./output:/s2r_mapping_tool/output
     - ./uploads:/s2r_mapping_tool/uploads
     ports:
-    - "5050:5050"
+    - "8080:8080"
 
   nginx_ws:
     image: nginx:latest
@@ -24,6 +25,5 @@ services:
       - ./dist:/var/www/s2r_mapping_tool/dist
     ports:
       - "80:80"
-      - "5050:5050"
     depends_on:
       - s2r_api

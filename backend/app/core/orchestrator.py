@@ -17,7 +17,7 @@ from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR
     MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
 
 logger = logging.getLogger('core-executor')
-executor = ProcessPoolExecutor(max_workers=WORKER_NUM)
+# executor = ProcessPoolExecutor(max_workers=WORKER_NUM)
 
 
 async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
@@ -63,7 +63,7 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         logger.info('Created xsd task')
         loop = asyncio.get_running_loop()
         logger.info('Starting executor for mapping process')
-        with executor as pool:
+        with ProcessPoolExecutor() as pool:
             logger.info('Using executor pool')
             await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
 

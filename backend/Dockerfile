@@ -22,7 +22,7 @@ RUN export JAVA_HOME
 COPY ./app /s2r_mapping_tool/app
 COPY requirements.txt /s2r_mapping_tool
 WORKDIR /s2r_mapping_tool
-RUN pip install -r /s2r_mapping_tool/requirements.txt
+RUN pip install --no-cache-dir -r /s2r_mapping_tool/requirements.txt
 
 EXPOSE 8080
 
