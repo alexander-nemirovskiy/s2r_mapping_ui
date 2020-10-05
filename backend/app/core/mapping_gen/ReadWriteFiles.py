@@ -1,3 +1,6 @@
+import logging
+from pathlib import Path
+
 import numpy as np
 import csv
 import xml.dom.minidom as xp
@@ -25,8 +28,9 @@ def readTextFile(filePath):
 
 def readXmlFile(xml_path, xml_name):
     cleaned_elem_list = []
-    xml_file = xml_path + xml_name
-    tree = ET.parse(xml_file)
+    # xml_file = xml_path + xml_name
+    xml_file = Path.joinpath(xml_path, xml_name)
+    tree = ET.parse(str(xml_file))
     root = tree.getroot()
     elem_list = [elem.tag for elem in root.iter()]
     for elem in elem_list:
@@ -78,7 +82,8 @@ def getElementandAttributeNameType(doc, attr):
 
 
 def readElementAndAttribute(filepath, filename):
-    docread = xp.parse(filepath + filename)
+    p = Path.joinpath(filepath, filename)
+    docread = xp.parse(str(p))
     getElement = getElementandAttributeNameType(docread, 'xsd:element')
     getAttribute = getElementandAttributeNameType(docread, 'xsd:attribute')
 
@@ -91,7 +96,10 @@ def readElementAndAttribute(filepath, filename):
 
 
 def readXsdFile(filepath, filename):
-    docread = xp.parse(filepath + filename)
+    p = Path.cwd().joinpath(filepath, filename)
+    logging.warning('ATTENTION!! Reading from: ' + str(p))
+
+    docread = xp.parse(str(p))
     getElement1 = getElementandAttribute(docread, 'xs:element')
     getElement2 = getElementandAttribute(docread, 'xsd:element')
     getElement3 = getElementandAttribute(docread, 'xs:attribute')
@@ -104,7 +112,8 @@ def readXsdFile(filepath, filename):
 
 
 def readXsdFilecomplextype(filepath, filename):
-    docread = xp.parse(filepath + filename)
+    p = Path.joinpath(filepath, filename)
+    docread = xp.parse(str(p))
     getElement = getElementandAttribute(docread, 'xsd:complexType')
     listofElements = list(filter(lambda x: x != '', getElement))
     finallist = list(dict.fromkeys(listofElements))
@@ -112,7 +121,8 @@ def readXsdFilecomplextype(filepath, filename):
 
 
 def readXsdFileElementAttribute(filepath, filename):
-    docread = xp.parse(filepath + filename)
+    p = Path.joinpath(filepath, filename)
+    docread = xp.parse(str(p))
     getElement1 = getElementandAttribute(docread, 'xsd:element')
     getElement2 = getElementandAttribute(docread, 'xsd:attribute')
     getElement1.extend(getElement2)
@@ -122,7 +132,8 @@ def readXsdFileElementAttribute(filepath, filename):
 
 
 def readOntology(filepath, filename):
-    onto = get_ontology(filepath + filename).load()
+    p = Path.cwd().joinpath(filepath, filename)
+    onto = get_ontology(str(p)).load()
     clist1 = list(onto.classes())
     clist2 = list(onto.properties())
     strlist1 = [str(i) for i in clist1]
@@ -135,7 +146,8 @@ def readOntology(filepath, filename):
 
 
 def readOntologyClass(filepath, filename):
-    onto = get_ontology(filepath + filename).load()
+    p = Path.joinpath(filepath, filename)
+    onto = get_ontology(str(p)).load()
     clist1 = list(onto.classes())
     strlist1 = [str(i) for i in clist1]
     final_term1 = [re_split('[.]', w)[-1] for w in strlist1]
@@ -144,7 +156,8 @@ def readOntologyClass(filepath, filename):
 
 
 def readOntologyProperty(filepath, filename):
-    onto = get_ontology(filepath + filename).load()
+    p = Path.joinpath(filepath, filename)
+    onto = get_ontology(str(p)).load()
     clist2 = list(onto.properties())
     strlist2 = [str(i) for i in clist2]
     final_term2 = [re_split('[.]', w)[-1] for w in strlist2]
@@ -154,7 +167,8 @@ def readOntologyProperty(filepath, filename):
 
 def readTurtle(filepath, filename):
     g = Graph()
-    g.load(filepath + filename, format="ttl")
+    p = Path.joinpath(filepath, filename)
+    g.load(str(p), format="ttl")
     flist = []
     for s, p, o in g:
         term = findall(r'#(\w+)', s)
@@ -175,12 +189,14 @@ def writeArray(inputArray, Opfilename):
 
 
 def writeCsv(inputArray, Opfilepath, name):
-    np.savetxt(Opfilepath + name, inputArray, fmt='%s', delimiter=",")
+    p = Path.joinpath(Opfilepath, name)
+    np.savetxt(str(p), inputArray, fmt='%s', delimiter=",")
     print("file has been saved in", name)
 
 
 def readTextFile(filePath, name):
-    file = open(filePath + name, 'r')
+    p = Path.joinpath(filePath, name)
+    file = open(str(p), 'r')
     outputList = file.read().split('\n')
     print("file has been read", name)
     return outputList

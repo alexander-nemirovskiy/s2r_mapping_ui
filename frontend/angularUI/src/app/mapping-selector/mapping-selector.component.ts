@@ -43,16 +43,7 @@ export class MappingSelectorComponent implements OnInit {
         let value = this.selector_form.controls['mapping_options'].value
         if (this.isValid){
             let v = ''
-            if(value === "other"){
-                v = this._custom_option;
-                // this.logger.log(`Form value: ${this._custom_option}`)
-                // m.mappingOptions.push(this._custom_option);
-            }
-            else {
-                v = value;
-                // this.logger.log(`Form value: ${value}`);
-                // m.mappingOptions.push(value);
-            }
+            v = value === "other"? this._custom_option: value;
             let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, [v]);
             this.mappingService.confirmMappingPair(m);
             this.logger.log(`Selection performed: [${v}]`);

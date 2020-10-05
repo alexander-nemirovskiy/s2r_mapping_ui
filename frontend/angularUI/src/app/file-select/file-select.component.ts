@@ -16,6 +16,7 @@ import { LoggerService } from '../services/logger.service';
     }]
 })
 export class FileSelectComponent implements OnInit {
+    @ViewChild('stepper') stepper;
     @ViewChild('source_file_select') source_file_select;
     @ViewChild('target_file_select') target_file_select;
 
@@ -48,31 +49,31 @@ export class FileSelectComponent implements OnInit {
 
     selectionChange($event){
         if($event.selectedStep === this.source_file_select){
-            this.sourceFiles$ = this.fileService.getFiles('xml')
+            this.sourceFiles$ = this.fileService.getFiles('xsd')
         }
         if($event.selectedStep === this.target_file_select){
-            this.targetFiles$ = this.fileService.getFiles('ttl')
+            this.targetFiles$ = this.fileService.getFiles('owl')
         }
     }
 
     startMapping(){
-        if (!this.sourceFormGroup.valid){
+        if (!this.sourceFormGroup.valid || !this.targetFormGroup.valid){
             this.logger.error('File form not valid!');
             return;
         }
         else {
+            let source = this.sourceFormGroup.value.sourceFileControl;
+            let target = this.targetFormGroup.value.targetFileControl;
             this.logger.log('Invoking mapping notification');
             this.resetForm();
-            this.notifier.notify();
+            this.notifier.notify(source, target);
         }
-        // this.logger.log('Invoking mapping notification');
-        //     this.resetForm();
-        //     this.notifier.notify();
     }
 
     private resetForm(){
         this.logger.log('Resetting file form');
         this.sourceFormGroup.reset();
         this.targetFormGroup.reset();
+        this.stepper.reset();
     }
 }

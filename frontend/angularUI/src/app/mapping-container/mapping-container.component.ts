@@ -5,6 +5,8 @@ import { MappingNotifierService } from '../services/mapping-notifier.service';
 import { LoggerService } from '../services/logger.service';
 import { MappingService } from '../services/mapping.service';
 import { MappingPair } from '../models/MappingPair';
+import { APIError } from '../models/Errors';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'mapping-container',
@@ -17,6 +19,8 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
     visible = false;
     localMappings: MappingPair[];
     confirmedItems: MappingPair[] = [];
+    mapping_error: boolean = false;
+    mapping_error_message: string = '';
     
     private subs: SubSink = new SubSink();
 
@@ -26,25 +30,33 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
         private logger: LoggerService) { }
 
     ngOnInit(): void {
+        this.mapping_error = false;
         this.subs.add(
             this.notifier.notification$.subscribe(
                 message => {
-                    if(message) {
-                        this.visible = message;
-                        this.logger.log('Notification received');
-                        this.localMappings = null;
-                        if (message) {
-                            this.subs.add(this.mappingService.startMapping().subscribe(
+                    this.visible = message ? true: false;
+                    this.logger.log('Notification received');
+                    this.localMappings = null;
+                    if (message && message.sourceName && message.targetName) {
+                        this.subs.add(this.mappingService.startMapping(message.sourceName, message.targetName)
+                            .pipe(
+                                catchError(err => {
+                                    this.logger.warn('Error received: propagating')
+                                    this.mapping_error = true;
+                                    this.mapping_error_message = err.message? err.message: JSON.stringify(err.detail);
+                                    throw(err);
+                                })
+                            )
+                            .subscribe(
                                 items => { this.localMappings = items; }
                             ));
-                        }
                     }
                 }
             ),
             this.mappingService.confirmedPairs$.subscribe(
-                (pair: MappingPair) => {
+                data => {(pair: MappingPair) => {
                     this.confirmedItems.push(pair);
-                }
+                }}
             )
         );
     }

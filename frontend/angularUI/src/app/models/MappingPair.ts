@@ -4,3 +4,10 @@ export class MappingPair {
         public mappingOptions: string[]
     ) {}
 }
+
+export class ChosenFiles {
+    constructor (
+        public sourceName: string,
+        public targetName: string
+    ){}
+}

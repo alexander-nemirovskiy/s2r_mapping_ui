@@ -1,0 +1,19 @@
+:host {
+    width: fit-content;
+}
+
+div.flex-container {
+    justify-content: space-around;
+    margin: 2vh 0;
+    padding: 3vh 0;
+    align-items: center;
+    background-color: white;
+
+    > div {
+        padding: 0 2vw;
+    }
+
+    > div:last-child {
+        justify-content: flex-end;
+    }
+}

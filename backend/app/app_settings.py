@@ -3,18 +3,21 @@ PROJECT_NAME = "Shift2Rail"
 ALLOWED_HOSTS = [
     'http://127.0.0.1',
     'https://127.0.0.1',
-    'http://127.0.0.1:4200'
+    'http://172.18.0.1',
+    'https://172.18.0.1'
 ]
+WORKER_NUM = 8
 
 # Folder structure
 OUTPUT_FOLDER = 'output'
 UPLOAD_FOLDER = 'uploads'
 INPUT_FOLDER = 'input'
 MAPPING_FOLDER = 'mapping'
-CLEANED_FILE_FOLDER = 'cleaner'
+CLEANED_FOLDER = 'cleaner'
+SELECTOR_FOLDER = 'selector'
 
 # external model location
-EXT_MODEL_LOCATION = 'uploads/GoogleNews-vectors-negative300.bin'
+EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'
 
 ALLOWED_INPUT_EXTENSIONS = ['xml', 'xsd']
 ALLOWED_ONTOLOGY_EXTENSIONS = ['ttl', 'owl']
@@ -35,3 +38,8 @@ write_pathVecOrgThr = 'SumVecOrgThr'
 
 MAPPING_OUTPUT_FILE = 'mapping_results_'
 SELECTOR_OUTPUT_FILE = 'selector_'
+SOURCE_FILE = 'source'
+TARGET_FILE = 'target'
+JAR_INPUT_PARAM = '-input'
+JAR_OUTPUT_PARAM = '-folder'
+JAR_NAME = 'jaxb_impl-0.1.3.jar'
