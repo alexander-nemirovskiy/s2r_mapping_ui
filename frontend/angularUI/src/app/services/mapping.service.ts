@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { LoggerService } from './logger.service';
 import { environment } from './../../environments/environment';
 import { MappingPair } from '../models/MappingPair';
+import { APIError } from '../models/Errors';
 
 const mappingURL = environment.API_Endpoint + '/mapping';
 
@@ -27,10 +28,15 @@ export class MappingService {
             .pipe(
                 tap(() => this.logger.log('Mapping done')),
                 catchError( err => {
-                    this.logger.error('MAPPING PROCESS failed: ' + err);
-                    this.logger.dir(err)
-                    const message = 'Sorry, GET mapping failed!';
-                    return throwError(message);
+                    this.logger.warn('Something wrong happened');
+                    if (err.detail && err.status_code){
+                        const message = `MAPPING PROCESS failed:\nCODE - [${err.status_code}]\nDETAILS - ${err.detail}`;
+                        if (err.detail.code && err.detail.message){
+                            return throwError(new APIError(err.status_code, err.detail, err.detail.code, err.detail.message));
+                        }
+                        return throwError(new APIError(err.status_code, err.detail, null, message));
+                    }
+                    return throwError(new APIError("500", null, null, "Unexpected server error"));
                 }),
                 map((data) => {
                     localStorage.setItem('file_id', data['file_id'])
@@ -63,7 +69,6 @@ export class MappingService {
                 'Content-Type': 'application/json' 
             }),
         };
-        // return this.http.post(mappingURL + '/pairs', { confirmedPairs: confirmedPairs, file_id: file_id }, options)
         return this.http.post(mappingURL + '/pairs', body)
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),

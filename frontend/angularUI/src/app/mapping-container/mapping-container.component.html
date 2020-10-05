@@ -1,6 +1,6 @@
 <div *ngIf="visible; then thenBlock; else elseBlock"></div>
 <ng-template #thenBlock>
-    <div class="flex-container row">
+    <div id="main_container" class="flex-container row">
         <div>
             <div *ngFor="let item of localMappings">
                 <mapping-selector [mappingPair]="item" (dismissEvent)="dismissChild($event)"></mapping-selector>
@@ -8,10 +8,14 @@
             <div class="content mat-elevation-z2" *ngIf="localMappings?.length === 0 && confirmedItems.length === 0">
                 <p>There is no content for this mapping yet!</p>
             </div>
-            <div id="loadingContainer" *ngIf="localMappings === null">
+            <div id="loadingContainer" *ngIf="localMappings === null && !mapping_error">
                 <div class="flex-container row">
                     <mat-spinner></mat-spinner>
                 </div>
+            </div>
+            <div id="mapping_error" class="content mat-elevation-z2" *ngIf="mapping_error">
+                <p>{{ mapping_error_message }}</p>
+                <p>Please try again. If the error persists contact the administration</p>
             </div>
         </div>
         <div class="mat-elevation-z2 flex-container column">

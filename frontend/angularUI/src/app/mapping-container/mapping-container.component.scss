@@ -1,4 +1,4 @@
-.flex-container {
+#main_container {
     > div {
         flex: 1 2 45vw;
         padding-bottom: 1vh;
@@ -38,8 +38,15 @@
             
             > div {
                 justify-content: center;
-
             }
+        }
+
+        > #mapping_error {
+            background-color: white;
+            color: red;
+            font-size: larger;
+            padding-top: 1vh;
+            margin-top: 2vh;
         }
     }
 }

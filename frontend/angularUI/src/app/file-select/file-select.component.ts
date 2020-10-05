@@ -16,6 +16,7 @@ import { LoggerService } from '../services/logger.service';
     }]
 })
 export class FileSelectComponent implements OnInit {
+    @ViewChild('stepper') stepper;
     @ViewChild('source_file_select') source_file_select;
     @ViewChild('target_file_select') target_file_select;
 
@@ -73,5 +74,6 @@ export class FileSelectComponent implements OnInit {
         this.logger.log('Resetting file form');
         this.sourceFormGroup.reset();
         this.targetFormGroup.reset();
+        this.stepper.reset();
     }
 }

@@ -17,7 +17,6 @@ from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR
     MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
 
 logger = logging.getLogger('core-executor')
-# executor = ProcessPoolExecutor(max_workers=WORKER_NUM)
 
 
 async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
@@ -58,7 +57,6 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
     try:
-        # simple_task = await process_xsd_input(input_folder, filename_uuid, source_file, target_file)
         await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
         logger.info('Created xsd task')
         loop = asyncio.get_running_loop()
@@ -66,8 +64,6 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         with ProcessPoolExecutor() as pool:
             logger.info('Using executor pool')
             await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
-
-            # await asyncio.gather(blocking_task, simple_task)
             logger.info('Created file: ' + created_filename)
         logger.info('Exited executor pool block')
     except Exception as e:
@@ -83,6 +79,7 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     cleaner_df = cleaner(filename_location, created_filename, 'ttl2xml', cleaner_output_folder,
                          filename_uuid + '.csv')
     logger.info('Cleaning process done!')
+    cleaner_df.to_csv(cleaner_output_folder.joinpath(filename_uuid + '.csv'))
     return filename_uuid, cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
 
 

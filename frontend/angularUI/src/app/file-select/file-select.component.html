@@ -1,4 +1,4 @@
-<mat-horizontal-stepper #stepper class="mat-elevation-z2" (selectionChange)="selectionChange($event)">
+<mat-horizontal-stepper #stepper [linear]="true" class="mat-elevation-z2" (selectionChange)="selectionChange($event)">
     <mat-step [stepControl]="optionalFormGroup" optional>
         <ng-template matStepLabel>Upload a file</ng-template>
         <p>Upload a file to the server</p>
