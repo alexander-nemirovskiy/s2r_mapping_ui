@@ -11,7 +11,7 @@ from rdflib import Graph, URIRef, RDFS, RDF
 import re
 
 
-def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type):
+def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type, xsdCamelCase):
     """Fix and transform the unstructured csv input to 3 lists:
     source_list: keeps the elements which have been given to be mapped
     mapped_list: keeps the elements which are the results of mapping
@@ -89,7 +89,10 @@ def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type):
                     elif char == "'":
                         continue
                     elif char == " ":
-                        temp_word_mapped = temp_word_mapped + "_"
+                        if xsdCamelCase:
+                            temp_word_mapped = temp_word_mapped
+                        else:
+                            temp_word_mapped = temp_word_mapped + "_"
                     elif char == "]":
                         second_col_start = False
                         second_col_end = True
@@ -152,7 +155,10 @@ def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type):
                     elif char == "'":
                         continue
                     elif char == " ":
-                        temp_word_source = temp_word_source + "_"
+                        if xsdCamelCase:
+                            temp_word_mapped = temp_word_mapped
+                        else:
+                            temp_word_mapped = temp_word_mapped + "_"
                     elif char == "]":
                         first_col_start = False
                         first_col_end = True

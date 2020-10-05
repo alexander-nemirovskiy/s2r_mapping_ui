@@ -16,7 +16,7 @@ def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
     # and transfer it into 3 lists containing, source term, mapped term and the mapping confidence score
     if raw_csv_unstructured:
         source_list, mapped_list, confidence_list = \
-            unstructured_csv_merged_lists(raw_csv_location, input_conversion_type)
+            unstructured_csv_merged_lists(raw_csv_location, input_conversion_type, xsdCamelCase=True)
     else:  # Future implementation if needed: implement for the structured CSV if needed
         print("Not implemented yet. Don't forget to respect the style of input_df during the implementation")
 
