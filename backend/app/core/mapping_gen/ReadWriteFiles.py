@@ -8,7 +8,7 @@ from rdflib import Graph
 from re import sub, findall
 from re import split as re_split
 import xml.etree.ElementTree as ET
-from owlready2 import get_ontology
+from owlready2 import get_ontology, re
 
 
 def readcsv(filepath):
@@ -97,7 +97,6 @@ def readElementAndAttribute(filepath, filename):
 
 def readXsdFile(filepath, filename):
     p = Path.cwd().joinpath(filepath, filename)
-    logging.warning('ATTENTION!! Reading from: ' + str(p))
 
     docread = xp.parse(str(p))
     getElement1 = getElementandAttribute(docread, 'xs:element')
@@ -242,3 +241,27 @@ def readDictionary2(inputFilename):
                 pass  # deal with bad lines of text here'
         finaldic = (str(data).translate(translation))
     return finaldic
+
+
+def checkUnderscore(i):
+    CamelCase = "CamelCase"
+    Space = "Space"
+    Underscore = "Underscore"
+    flagu = bool(re.search(r'[_]', i))
+    flags = bool(re.search(r'[\s]', i))
+    if flagu:
+        status = Underscore
+    elif flags:
+        status = Space
+    else:
+        status = CamelCase
+    return status
+
+
+def getStatus(folder, filename) -> str:
+    p = Path.cwd().joinpath(folder, filename)
+    docread = xp.parse(str(p))
+    getElement = docread.getElementsByTagName('xsd:complexType')
+    name = [f.getAttribute('name') for f in getElement]
+    status = checkUnderscore(name[0])
+    return status
