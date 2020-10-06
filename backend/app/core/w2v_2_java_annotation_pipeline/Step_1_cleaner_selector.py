@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
-            outputs_directory, cleaned_csv_name):
+            outputs_directory, cleaned_csv_name, getXsdStatus):
     """ Function to transform the output of W2V in a standard csv format """
 
     # * Directories
@@ -16,7 +16,7 @@ def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
     # and transfer it into 3 lists containing, source term, mapped term and the mapping confidence score
     if raw_csv_unstructured:
         source_list, mapped_list, confidence_list = \
-            unstructured_csv_merged_lists(raw_csv_location, input_conversion_type, xsdCamelCase=True)
+            unstructured_csv_merged_lists(raw_csv_location, input_conversion_type, xsdStructure=getXsdStatus)
     else:  # Future implementation if needed: implement for the structured CSV if needed
         print("Not implemented yet. Don't forget to respect the style of input_df during the implementation")
 

@@ -32,11 +32,6 @@ def makeCompound2dArray(inputList):
     return output_2dArray
 
 
-def checkUnderscore(i):
-    flag = bool(re.search(r'[_]', i))
-    return flag
-
-
 def splitToList(inputList):
     final_list = []
     split_space = [re.split('[_|\s]+', w) for w in inputList]

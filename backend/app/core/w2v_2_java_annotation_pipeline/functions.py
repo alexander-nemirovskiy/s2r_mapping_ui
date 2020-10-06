@@ -11,7 +11,7 @@ from rdflib import Graph, URIRef, RDFS, RDF
 import re
 
 
-def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type, xsdCamelCase):
+def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type, xsdStructure):
     """Fix and transform the unstructured csv input to 3 lists:
     source_list: keeps the elements which have been given to be mapped
     mapped_list: keeps the elements which are the results of mapping
@@ -89,10 +89,12 @@ def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type, xsdCam
                     elif char == "'":
                         continue
                     elif char == " ":
-                        if xsdCamelCase:
-                            temp_word_mapped = temp_word_mapped
-                        else:
+                        if xsdStructure == "Underscore":
                             temp_word_mapped = temp_word_mapped + "_"
+                        elif xsdStructure == "Space":
+                            temp_word_mapped = temp_word_mapped + " "
+                        elif xsdStructure == "CamelCase":
+                            temp_word_mapped = temp_word_mapped
                     elif char == "]":
                         second_col_start = False
                         second_col_end = True
@@ -155,10 +157,12 @@ def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type, xsdCam
                     elif char == "'":
                         continue
                     elif char == " ":
-                        if xsdCamelCase:
-                            temp_word_mapped = temp_word_mapped
-                        else:
+                        if xsdStructure == "Underscore":
                             temp_word_mapped = temp_word_mapped + "_"
+                        elif xsdStructure == "Space":
+                            temp_word_mapped = temp_word_mapped + " "
+                        elif xsdStructure == "CamelCase":
+                            temp_word_mapped = temp_word_mapped
                     elif char == "]":
                         first_col_start = False
                         first_col_end = True
@@ -194,21 +198,21 @@ def unstructured_csv_merged_lists(raw_csv_location, input_coversion_type, xsdCam
 
 
 # Attention: in case of using the function fix blank rows after each row
-def csv_from_excel(outputs_directory, inputs_directory, file_name):
-    """ Convert xlsx to csv """
-
-    wb = xlrd.open_workbook(inputs_directory+file_name)
-    sh = wb.sheet_by_name('Sheet1')
-    # next two lines drop the xlsx to change it to csv and keep the original name
-    new_name = file_name[: -5:]
-    new_name = new_name + ".csv"
-    your_csv_file = open(outputs_directory+new_name, 'w', encoding='utf8')
-    wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
-
-    for rownum in range(sh.nrows):
-        wr.writerow(sh.row_values(rownum))
-
-    your_csv_file.close()
+# def csv_from_excel(outputs_directory, inputs_directory, file_name):
+#     """ Convert xlsx to csv """
+#
+#     wb = xlrd.open_workbook(inputs_directory+file_name)
+#     sh = wb.sheet_by_name('Sheet1')
+#     # next two lines drop the xlsx to change it to csv and keep the original name
+#     new_name = file_name[: -5:]
+#     new_name = new_name + ".csv"
+#     your_csv_file = open(outputs_directory+new_name, 'w', encoding='utf8')
+#     wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
+#
+#     for rownum in range(sh.nrows):
+#         wr.writerow(sh.row_values(rownum))
+#
+#     your_csv_file.close()
 # -----------------------End of function--------------------------------- #
 
 

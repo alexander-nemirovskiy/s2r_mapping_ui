@@ -63,8 +63,9 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         logger.info('Starting executor for mapping process')
         with ProcessPoolExecutor() as pool:
             logger.info('Using executor pool')
-            await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+            getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
             logger.info('Created file: ' + created_filename)
+
         logger.info('Exited executor pool block')
     except Exception as e:
         logger.warning('Exception during mapping: ' + str(e))
@@ -76,8 +77,8 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     faulthandler.disable()
     logger.info('Starting cleaning process...')
     cleaner_output_folder = Path.cwd().joinpath(OUTPUT_FOLDER, CLEANED_FOLDER)
-    cleaner_df = cleaner(filename_location, created_filename, 'ttl2xml', cleaner_output_folder,
-                         filename_uuid + '.csv')
+    cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', cleaner_output_folder,
+                         filename_uuid + '.csv', getXsdStatus)
     logger.info('Cleaning process done!')
     cleaner_df.to_csv(cleaner_output_folder.joinpath(filename_uuid + '.csv'))
     return filename_uuid, cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
@@ -102,10 +103,10 @@ async def generate_annotations(cleaner_df: DataFrame, automatic: bool, file_id: 
             note_file_name=Path.cwd().joinpath(OUTPUT_FOLDER, 'notes_location', 'individuals_' + file_id + '.txt'),
             selected_csv_name=selector_output_folder.joinpath(output_name),
             input_xml_name=SOURCE_FILE,
-            annotated_csv_name=Path.cwd().joinpath(OUTPUT_FOLDER, 'annotation', 'annotated_output_' + file_id),
+            annotated_csv_name=Path.cwd().joinpath(OUTPUT_FOLDER, 'annotation', 'annotated_output_' + file_id + '.csv'),
             java_files_directory=Path.cwd().joinpath(INPUT_FOLDER, file_id, 'java_classes'),
             final_java_files_directory=final_output_dir,
-            user_specified_conversion_type='ttl2xml'
+            user_specified_conversion_type='xml2ttl'
         )
     except Exception as e:
         logger.error(f'Annotation process failed for {file_id} due to exception:\t{e}')

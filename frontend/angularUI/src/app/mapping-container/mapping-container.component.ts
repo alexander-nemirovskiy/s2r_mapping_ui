@@ -54,14 +54,18 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
                 }
             ),
             this.mappingService.confirmedPairs$.subscribe(
-                data => {(pair: MappingPair) => {
+                (pair: MappingPair) => {
+                    this.logger.log(`Confirmed items count: ${this.confirmedItems.length}`)
                     this.confirmedItems.push(pair);
-                }}
+                }
             )
         );
     }
 
     finalizeChoice(){
+        this.confirmedItems.forEach((item) => {
+            console.log(item.sourceTerm)
+        })
         this.subs.add(this.mappingService.finalizeMappings(this.confirmedItems)
             .subscribe(
                 data => {
