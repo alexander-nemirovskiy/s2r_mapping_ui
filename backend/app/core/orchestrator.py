@@ -10,8 +10,8 @@ from pandas import DataFrame
 
 from .commons import API_Exception, ErrorCode
 from .mapping_gen.mapping import start_mapping
-from .w2v_2_java_annotation_pipeline.Step_1_cleaner_selector import cleaner, selector
-from .w2v_2_java_annotation_pipeline.Step_2_type_identification_to_java_annotating \
+from .annotation_pipeline.Step_1_cleaner_selector import cleaner, selector
+from .annotation_pipeline.Step_2_type_identification_to_java_annotating \
     import type_identifier_to_java_annotator
 from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR_OUTPUT_FILE, SOURCE_FILE, TARGET_FILE, \
     MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
@@ -23,9 +23,9 @@ async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: 
     logging.info('Creating folder setup')
     input_location = input_folder.joinpath(filename_uuid)
     input_location.mkdir(parents=True)
-    logging.info('Copying files to required location')
-    copyfile(source_file, input_location.joinpath(SOURCE_FILE))
-    copyfile(target_file, input_location.joinpath(TARGET_FILE))
+    # logging.info('Copying files to required location')
+    # copyfile(source_file, input_location.joinpath(SOURCE_FILE))
+    # copyfile(target_file, input_location.joinpath(TARGET_FILE))
     logging.info('Executing java command in separate shell')
     command = ' '.join(['java', '-jar', str(input_folder.joinpath(JAR_NAME)),
                         JAR_INPUT_PARAM, str(source_file), JAR_OUTPUT_PARAM,
@@ -54,7 +54,14 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
 
     filename_uuid: str = str(uuid4()).split('-')[0]
     created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
-    filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
+    # filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
+
+    filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, filename_uuid)
+    if not filename_location.is_dir():
+        filename_location.mkdir(parents=True)
+    logging.info('Copying files to required location')
+    copyfile(source_file, filename_location.joinpath(SOURCE_FILE))
+    copyfile(target_file, filename_location.joinpath(TARGET_FILE))
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
     try:
         await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
@@ -76,22 +83,22 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
     faulthandler.disable()
     logger.info('Starting cleaning process...')
-    cleaner_output_folder = Path.cwd().joinpath(OUTPUT_FOLDER, CLEANED_FOLDER)
-    cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', cleaner_output_folder,
-                         filename_uuid + '.csv', getXsdStatus)
+    cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', getXsdStatus)
     logger.info('Cleaning process done!')
-    cleaner_df.to_csv(cleaner_output_folder.joinpath(filename_uuid + '.csv'))
+    cleaner_df.to_csv(filename_location.joinpath(CLEANED_FOLDER + '_' + filename_uuid + '.csv'))
     return filename_uuid, cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
 
 
 async def generate_annotations(cleaner_df: DataFrame, automatic: bool, file_id: str):
     output_name: str = SELECTOR_OUTPUT_FILE + file_id + '.csv'
-    selector_output_folder = Path.cwd().joinpath(OUTPUT_FOLDER, SELECTOR_FOLDER)
-    out_df = selector(automatic, cleaner_df, selector_output_folder, output_name)
+    folder = Path.cwd().joinpath(OUTPUT_FOLDER, file_id)
+    if not folder.is_dir():
+        raise Exception(f'Output folder for {file_id} is missing in annotation step.')
+    out_df = selector(automatic, cleaner_df, folder, output_name)
 
     input_location = Path.cwd().joinpath(INPUT_FOLDER, file_id)
 
-    final_output_dir = Path.cwd().joinpath(OUTPUT_FOLDER, 'annotated_java_files', file_id)
+    final_output_dir = folder.joinpath('annotated_java_files')
     final_output_dir.mkdir(parents=True)
 
     try:
@@ -100,10 +107,10 @@ async def generate_annotations(cleaner_df: DataFrame, automatic: bool, file_id: 
             input_ttl_name=TARGET_FILE,
             outputs_directory=OUTPUT_FOLDER,
             ttl_term_type_csv_name='ttl_term_type_' + file_id + '.csv',
-            note_file_name=Path.cwd().joinpath(OUTPUT_FOLDER, 'notes_location', 'individuals_' + file_id + '.txt'),
-            selected_csv_name=selector_output_folder.joinpath(output_name),
+            note_file_name=Path.cwd().joinpath(OUTPUT_FOLDER, file_id, 'notes_' + file_id + '.txt'),
+            selected_csv_name=folder.joinpath(output_name),
             input_xml_name=SOURCE_FILE,
-            annotated_csv_name=Path.cwd().joinpath(OUTPUT_FOLDER, 'annotation', 'annotated_output_' + file_id + '.csv'),
+            annotated_csv_name=Path.cwd().joinpath(OUTPUT_FOLDER, file_id, 'annotated_output_' + file_id + '.csv'),
             java_files_directory=Path.cwd().joinpath(INPUT_FOLDER, file_id, 'java_classes'),
             final_java_files_directory=final_output_dir,
             user_specified_conversion_type='xml2ttl'

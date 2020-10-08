@@ -531,7 +531,7 @@ def attribute_line_checker(input_xml_term, input_line):
     validation = False
 
     # Validate if the line is the
-    if all(x in line for x in ['@XmlAttribute(name', '=']):
+    if all(x in line for x in ['@XmlAttribute(name', '=']) or all(x in line for x in ['@XmlElement(name', '=']):
         line_validation = True
 
         # Splitting the line, find the last element and dropping ) and " chars which are the results of JAXB.

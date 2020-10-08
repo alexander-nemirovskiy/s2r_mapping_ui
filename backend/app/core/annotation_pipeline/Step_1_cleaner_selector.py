@@ -5,8 +5,7 @@ import pandas as pd
 """ --------------------------- Cleaning --------------------------- """
 
 
-def cleaner(inputs_directory, raw_csv_name, input_conversion_type,
-            outputs_directory, cleaned_csv_name, getXsdStatus):
+def cleaner(inputs_directory, raw_csv_name, input_conversion_type, getXsdStatus):
     """ Function to transform the output of W2V in a standard csv format """
 
     # * Directories
