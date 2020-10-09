@@ -17,7 +17,8 @@ CLEANED_FOLDER = 'cleaner'
 SELECTOR_FOLDER = 'selector'
 
 # external model location
-EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'
+# EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'
+EXT_MODEL_NAME = 'model.bin'
 
 ALLOWED_INPUT_EXTENSIONS = ['xml', 'xsd']
 ALLOWED_ONTOLOGY_EXTENSIONS = ['ttl', 'owl']

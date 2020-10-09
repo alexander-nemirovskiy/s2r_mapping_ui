@@ -497,7 +497,8 @@ def class_line_checker(input_xml_term, input_line):
     validation = False
 
     # Validate if the line is the
-    if all(x in line for x in ['public', 'class', '{']):
+    # if all(x in line for x in ['public', 'class']):
+    if ' class ' in line:
         line_validation = True
         line_elements = line.split()
         class_name_idex = line_elements.index('class') + 1

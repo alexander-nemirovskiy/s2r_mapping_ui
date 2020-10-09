@@ -22,7 +22,7 @@ logger = logging.getLogger('core-executor')
 async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
     logging.info('Creating folder setup')
     input_location = input_folder.joinpath(filename_uuid)
-    input_location.mkdir(parents=True)
+    # input_location.mkdir(parents=True)
     # logging.info('Copying files to required location')
     # copyfile(source_file, input_location.joinpath(SOURCE_FILE))
     # copyfile(target_file, input_location.joinpath(TARGET_FILE))
@@ -57,11 +57,17 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     # filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
 
     filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, filename_uuid)
+    input_location = Path.cwd().joinpath(INPUT_FOLDER, filename_uuid)
     if not filename_location.is_dir():
         filename_location.mkdir(parents=True)
-    logging.info('Copying files to required location')
+    if not input_location.is_dir():
+        input_location.mkdir(parents=True)
+    logging.info('Copying files to required OUTPUT location')
     copyfile(source_file, filename_location.joinpath(SOURCE_FILE))
     copyfile(target_file, filename_location.joinpath(TARGET_FILE))
+    logging.info('Copying files to required INPUT location')
+    copyfile(source_file, input_location.joinpath(SOURCE_FILE))
+    copyfile(target_file, input_location.joinpath(TARGET_FILE))
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
     try:
         await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
@@ -122,8 +128,13 @@ async def generate_annotations(cleaner_df: DataFrame, automatic: bool, file_id: 
 
 async def get_zip_location(file_id: str) -> Path:
     logger.info(f'Zipping files for {file_id}')
-    location = Path.cwd().joinpath(OUTPUT_FOLDER, 'annotated_java_files')
-    user_folder = location.joinpath(file_id)
-    make_archive(user_folder, 'zip', location, file_id)
+    user_folder = Path.cwd().joinpath(OUTPUT_FOLDER, file_id)
+    location = user_folder.joinpath('annotated_java_files')
+    make_archive(
+        base_dir='annotated_java_files',
+        root_dir=user_folder,
+        format='zip',
+        base_name=location
+    )
     logger.info(f'Zipping for {file_id} done!')
-    return location.joinpath(file_id + '.zip')
+    return user_folder.joinpath('annotated_java_files.zip')
