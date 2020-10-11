@@ -13,7 +13,6 @@ OUTPUT_FOLDER = 'output'
 UPLOAD_FOLDER = 'uploads'
 INPUT_FOLDER = 'input'
 MAPPING_FOLDER = 'mapping'
-CLEANED_FOLDER = 'cleaner'
 SELECTOR_FOLDER = 'selector'
 
 # external model location
@@ -38,6 +37,7 @@ write_pathVecOrgRaw = 'SumVecOrgRaw'
 write_pathVecOrgThr = 'SumVecOrgThr'
 
 MAPPING_OUTPUT_FILE = 'mapping_results_'
+CLEANED_FILE = 'cleaner_'
 SELECTOR_OUTPUT_FILE = 'selector_'
 SOURCE_FILE = 'source'
 TARGET_FILE = 'target'

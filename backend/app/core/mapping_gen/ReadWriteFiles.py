@@ -166,7 +166,7 @@ def readOntologyProperty(filepath, filename):
 
 def readTurtle(filepath, filename):
     g = Graph()
-    p = Path.joinpath(filepath, filename)
+    p = Path.cwd().joinpath(filepath, filename)
     g.load(str(p), format="ttl")
     flist = []
     for s, p, o in g:

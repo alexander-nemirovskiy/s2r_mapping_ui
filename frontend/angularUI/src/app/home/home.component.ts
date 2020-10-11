@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { MappingContainerComponent } from '../mapping-container/mapping-container.component';
+import { APIError } from '../models/Errors';
 import { LoggerService } from '../services/logger.service';
 import { MappingNotifierService } from '../services/mapping-notifier.service';
 
@@ -11,6 +12,8 @@ import { MappingNotifierService } from '../services/mapping-notifier.service';
     styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+    private sub: Subscription;
+
     private mappingContainer: MappingContainerComponent;
     @ViewChild(MappingContainerComponent, { static: false }) set content(content: MappingContainerComponent) {
         if (content) {
@@ -20,7 +23,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     public showMappingChild = true;
-    private sub: Subscription;
+    public mapping_error = false;
+    public process_error = '';
 
     constructor(
         private notifier: MappingNotifierService,
@@ -40,6 +44,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     onEndMapping($event) {
         this.logger.warn('Destroying component');
         this.showMappingChild = false;
+        if( $event instanceof APIError){
+            this.mapping_error = true;
+            this.process_error = $event.message;
+        }
     }
 
     ngOnDestroy(): void {

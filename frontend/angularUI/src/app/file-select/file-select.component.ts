@@ -52,7 +52,8 @@ export class FileSelectComponent implements OnInit {
             this.sourceFiles$ = this.fileService.getFiles('xsd')
         }
         if($event.selectedStep === this.target_file_select){
-            this.targetFiles$ = this.fileService.getFiles('owl')
+            // this.targetFiles$ = this.fileService.getFiles('owl')
+            this.targetFiles$ = this.fileService.getFiles()
         }
     }
 

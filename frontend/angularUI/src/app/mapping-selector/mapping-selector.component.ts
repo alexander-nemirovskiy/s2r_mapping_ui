@@ -18,6 +18,7 @@ export class MappingSelectorComponent implements OnInit {
     private selected_option = "";
     selector_form: FormGroup;
     public showSelector = true;
+    public valid_selection = false;
 
     constructor(
         private formBuilder: FormBuilder, 
@@ -28,6 +29,9 @@ export class MappingSelectorComponent implements OnInit {
         this.selector_form = this.formBuilder.group({
             mapping_options: ['', Validators.required]
         });
+        let default_value = this.mappingPair.mappingOptions[0]
+        this.selector_form.controls['mapping_options'].setValue(default_value)
+        this.valid_selection = default_value.length > 0;
     }
  
     mappingOption(event: any) {
@@ -37,11 +41,13 @@ export class MappingSelectorComponent implements OnInit {
 
     onRadioChange(mrChange: MatRadioChange){
         this.selected_option = mrChange.value;
+        this.valid_selection = this.checkValidOptionSelected()
     }
 
     confirmMapping(){
         let value = this.selector_form.controls['mapping_options'].value
-        if (this.isValid){
+        this.logger.log(`Valid selection: ${this.checkValidOptionSelected()}`)
+        if (this.checkValidOptionSelected()){
             let v = ''
             v = value === "other"? this._custom_option: value;
             let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, [v]);
@@ -56,11 +62,15 @@ export class MappingSelectorComponent implements OnInit {
         this.dismissEvent.emit(this.mappingPair);
     }
 
-    isValid(): boolean{
+    private checkValidOptionSelected(): boolean{
         let value = this.selector_form.controls['mapping_options'].value
-        if(value === "other")
-            return !(this._custom_option.length > 0)
-        return !this.selector_form.valid 
+        if(value === "other"){
+            this.logger.warn(`Output ${value}`)
+            this.logger.warn(`Custom value ${this._custom_option} - ${this._custom_option.length > 0}`)
+            return (this._custom_option.length > 0)
+        }
+        this.logger.warn(`Output ${value} - ${this.selector_form.valid}`)
+        return this.selector_form.valid 
     }
 
 }

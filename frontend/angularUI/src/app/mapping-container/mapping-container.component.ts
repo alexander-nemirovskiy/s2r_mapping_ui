@@ -72,7 +72,11 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
                     this.finalizeMapping.emit(this);
                     this.logger.log('Confirmation choices received. Ready to delete')
                 },
-                error => {alert(error)}
+                error => {
+                    this.mapping_error = true;
+                    this.mapping_error_message = error.message? error.message: JSON.stringify(error.detail);
+                    this.finalizeMapping.emit(error);
+                }
             )
         );
     }

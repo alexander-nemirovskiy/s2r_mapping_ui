@@ -73,10 +73,14 @@ export class MappingService {
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),
                 catchError( err => {
-                    this.logger.error('Finalize mappings failed: ' + err);
-                    this.logger.dir(err);
-                    const message = 'Sorry, POST pair confirmation failed!';
-                    return throwError(message);
+                    if (err.detail && err.status_code){
+                        const message = `Annotation process failed:\nCODE - [${err.status_code}]\nDETAILS - ${err.detail}`;
+                        if (err.detail.code && err.detail.message){
+                            return throwError(new APIError(err.status_code, err.detail, err.detail.code, err.detail.message));
+                        }
+                        return throwError(new APIError(err.status_code, err.detail, null, message));
+                    }
+                    return throwError(new APIError("500", null, null, "Unexpected server error"));
                 })
             );
     }

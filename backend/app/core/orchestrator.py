@@ -14,7 +14,7 @@ from .annotation_pipeline.Step_1_cleaner_selector import cleaner, selector
 from .annotation_pipeline.Step_2_type_identification_to_java_annotating \
     import type_identifier_to_java_annotator
 from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR_OUTPUT_FILE, SOURCE_FILE, TARGET_FILE, \
-    MAPPING_OUTPUT_FILE, CLEANED_FOLDER, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
+    MAPPING_OUTPUT_FILE, CLEANED_FILE, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
 
 logger = logging.getLogger('core-executor')
 
@@ -54,8 +54,6 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
 
     filename_uuid: str = str(uuid4()).split('-')[0]
     created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
-    # filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
-
     filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, filename_uuid)
     input_location = Path.cwd().joinpath(INPUT_FOLDER, filename_uuid)
     if not filename_location.is_dir():
@@ -69,29 +67,34 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     copyfile(source_file, input_location.joinpath(SOURCE_FILE))
     copyfile(target_file, input_location.joinpath(TARGET_FILE))
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
+    getXsdStatus = ''
     try:
-        await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
-        logger.info('Created xsd task')
-        loop = asyncio.get_running_loop()
-        logger.info('Starting executor for mapping process')
-        with ProcessPoolExecutor() as pool:
-            logger.info('Using executor pool')
-            getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
-            logger.info('Created file: ' + created_filename)
+        # await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
+        # logger.info('Created xsd task')
+        # loop = asyncio.get_running_loop()
+        # logger.info('Starting executor for mapping process')
+        # with ProcessPoolExecutor() as pool:
+        #     logger.info('Using executor pool')
+        #     getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+        #     logger.info('Created file: ' + created_filename)
 
         logger.info('Exited executor pool block')
     except Exception as e:
         logger.warning('Exception during mapping: ' + str(e))
         raise API_Exception(ErrorCode.GENERIC, 'Mapping failed')
 
-    if not created_filename:
-        logger.warning('Mapping file not created')
-        raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
+    if not getXsdStatus:
+        logger.warning('Mapping process terminated with an error. Please check')
+        # raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
+        # TODO testing only
+        getXsdStatus = 'CamelCase'
+        created_filename = 'mapping.csv'
+        filename_location = Path.cwd().joinpath(INPUT_FOLDER)
     faulthandler.disable()
     logger.info('Starting cleaning process...')
     cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', getXsdStatus)
     logger.info('Cleaning process done!')
-    cleaner_df.to_csv(filename_location.joinpath(CLEANED_FOLDER + '_' + filename_uuid + '.csv'))
+    cleaner_df.to_csv(filename_location.joinpath(CLEANED_FILE + filename_uuid + '.csv'))
     return filename_uuid, cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
 
 

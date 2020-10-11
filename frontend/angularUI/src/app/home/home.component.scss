@@ -2,3 +2,26 @@ div {
     padding: 5vh 5vw;
     background-color:  rgb(211, 211, 211);
 }
+
+#mapping_error {
+    background-color: white;
+    color: red;
+    font-size: larger;
+    text-align: justify;
+    padding-top: 1vh;
+    margin-top: 2vh;
+
+    > div {
+        background-color: white;
+        flex: 3 5 auto;
+    }
+
+    > #error_icon {
+        background-color: white;
+        flex: 1 1 50px; 
+
+        mat-icon {
+            font-size: xx-large;
+        }
+    }
+}
