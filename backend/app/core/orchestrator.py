@@ -95,6 +95,11 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', getXsdStatus)
     logger.info('Cleaning process done!')
     cleaner_df.to_csv(filename_location.joinpath(CLEANED_FILE + filename_uuid + '.csv'))
+
+    # TODO test this out
+    idx = cleaner_df.groupby(['source_term'])['mapped_term'].transform(max) == cleaner_df['Y']
+    newdf = cleaner_df[idx]
+
     return filename_uuid, cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
 
 
@@ -141,3 +146,4 @@ async def get_zip_location(file_id: str) -> Path:
     )
     logger.info(f'Zipping for {file_id} done!')
     return user_folder.joinpath('annotated_java_files.zip')
+

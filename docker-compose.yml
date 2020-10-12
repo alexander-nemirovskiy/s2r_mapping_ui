@@ -5,7 +5,7 @@ services:
     container_name: s2r_mapping_tool
     image: s2r_img
     build:
-      context: ./backend/app
+      context: ./backend
       dockerfile: Dockerfile
     network_mode: bridge
     restart: always
@@ -16,13 +16,29 @@ services:
     ports:
     - "8080:8080"
 
+#  nginx_ws:
+#    image: nginx:latest
+#    container_name: nginx_prod
+#    network_mode: bridge
+#    volumes:
+#      - ./reverse_proxy:/etc/nginx/conf.d
+#      - ./dist:/var/www/s2r_mapping_tool/dist
+#    ports:
+#      - "80:80"
+#    depends_on:
+#      - s2r_api
+
   nginx_ws:
-    image: nginx:latest
-    container_name: nginx_prod
+    container_name: s2r_web_app
+    image: s2r_ui
+    build:
+      context: ./frontend/angularUI
+      dockerfile: Dockerfile
     network_mode: bridge
+    restart: always
     volumes:
+#      - ./dist:/smart/dist
       - ./reverse_proxy:/etc/nginx/conf.d
-      - ./dist:/var/www/s2r_mapping_tool/dist
     ports:
       - "80:80"
     depends_on:

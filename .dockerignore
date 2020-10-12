@@ -1,2 +1,5 @@
-input/model.bin
-input/jaxb*.jar
+backend/input/model.bin
+backend/input/jaxb*.jar
+frontend/angularUI/node_modules/
+jaxb_impl/
+docs/

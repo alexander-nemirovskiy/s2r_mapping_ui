@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   FILE_ID: 'file_id',
-  API_Endpoint: 'http://54.90.43.228/api/v1'
+  API_Endpoint: 'http://127.0.0.1/api/v1'
 };
