@@ -725,7 +725,7 @@ def rdf_object_extractor_v2(graph):
                     if object_str == 'Class':
                         class_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                         obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
-                    elif object_str == 'Property' or object_str == 'ObjectProperty':
+                    elif object_str == 'Property' or object_str == 'ObjectProperty' or object_str == 'DatatypeProperty':
                         property_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                         obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
                     else:
@@ -739,7 +739,7 @@ def rdf_object_extractor_v2(graph):
                                 # class_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                                 # obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
                                 note = subject_str + ' | individual | ' + object_str  # Creating the note to be written separately
-                            elif actual_object == 'Property' or object_str == 'ObjectProperty':
+                            elif actual_object == 'Property' or object_str == 'ObjectProperty' or object_str == 'DatatypeProperty':
                                 # property_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                                 # obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
                                 note = subject_str + ' | individual | ' + object_str  # Creating the note to be written separately
