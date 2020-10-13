@@ -1,20 +1,37 @@
 version: '3'
 services:
+  nginx_ws:
+      container_name: s2r_web_app
+      image: s2r_ui
+      build:
+        context: ./frontend/angularUI
+        dockerfile: Dockerfile
+      network_mode: bridge
+      restart: always
+#      volumes:
+#        - ./proxy_conf/proxy.conf:/etc/nginx/conf.d/
+      ports:
+        - "80:80"
+#        - "8081:80"
+      command: ["nginx", "-g", "daemon off;"]
 
   s2r_api:
     container_name: s2r_mapping_tool
     image: s2r_img
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
     network_mode: bridge
     restart: always
     volumes:
-    - ./input:/s2r_mapping_tool/input
-    - ./output:/s2r_mapping_tool/output
-    - ./uploads:/s2r_mapping_tool/uploads
-    ports:
-    - "8080:8080"
+    - ./input:/smart/input
+    - ./output:/smart/output
+    - ./uploads:/smart/uploads
+#    ports:
+#    - "8081:8081"
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081"]
+    depends_on:
+      - nginx_ws
 
 #  nginx_ws:
 #    image: nginx:latest
@@ -28,18 +45,3 @@ services:
 #    depends_on:
 #      - s2r_api
 
-  nginx_ws:
-    container_name: s2r_web_app
-    image: s2r_ui
-    build:
-      context: ./frontend/angularUI
-      dockerfile: Dockerfile
-    network_mode: bridge
-    restart: always
-    volumes:
-#      - ./dist:/smart/dist
-      - ./reverse_proxy:/etc/nginx/conf.d
-    ports:
-      - "80:80"
-    depends_on:
-      - s2r_api
