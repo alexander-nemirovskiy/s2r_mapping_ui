@@ -69,14 +69,14 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
     getXsdStatus = ''
     try:
-        # await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
-        # logger.info('Created xsd task')
-        # loop = asyncio.get_running_loop()
-        # logger.info('Starting executor for mapping process')
-        # with ProcessPoolExecutor() as pool:
-        #     logger.info('Using executor pool')
-        #     getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
-        #     logger.info('Created file: ' + created_filename)
+        await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
+        logger.info('Created xsd task')
+        loop = asyncio.get_running_loop()
+        logger.info('Starting executor for mapping process')
+        with ProcessPoolExecutor() as pool:
+            logger.info('Using executor pool')
+            getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+            logger.info('Created file: ' + created_filename)
 
         logger.info('Exited executor pool block')
     except Exception as e:
@@ -85,22 +85,20 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
 
     if not getXsdStatus:
         logger.warning('Mapping process terminated with an error. Please check')
-        # raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
+        raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
         # TODO testing only
-        getXsdStatus = 'CamelCase'
-        created_filename = 'mapping.csv'
-        filename_location = Path.cwd().joinpath(INPUT_FOLDER)
+        # getXsdStatus = 'CamelCase'
+        # created_filename = 'mapping.csv'
+        # filename_location = Path.cwd().joinpath(INPUT_FOLDER)
     faulthandler.disable()
     logger.info('Starting cleaning process...')
     cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', getXsdStatus)
     logger.info('Cleaning process done!')
     cleaner_df.to_csv(filename_location.joinpath(CLEANED_FILE + filename_uuid + '.csv'))
 
-    # TODO test this out
-    idx = cleaner_df.groupby(['source_term'])['mapped_term'].transform(max) == cleaner_df['Y']
-    newdf = cleaner_df[idx]
-
-    return filename_uuid, cleaner_df.groupby('source_term')['mapped_term'].apply(list).to_dict()
+    sorted_group = cleaner_df.sort_values('confidence_score', ascending=False).groupby('source_term', as_index=False)\
+        [['mapped_term', 'confidence_score']].agg(lambda x: list(x))
+    return filename_uuid, sorted_group.to_dict()
 
 
 async def generate_annotations(cleaner_df: DataFrame, automatic: bool, file_id: str):
@@ -146,4 +144,3 @@ async def get_zip_location(file_id: str) -> Path:
     )
     logger.info(f'Zipping for {file_id} done!')
     return user_folder.joinpath('annotated_java_files.zip')
-

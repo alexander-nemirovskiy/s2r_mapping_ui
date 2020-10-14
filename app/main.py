@@ -13,13 +13,13 @@ logging.basicConfig(
 
 
 app = FastAPI(title=PROJECT_NAME,
-              version='0.0.1',
-              description='First draft of shift to rail mapping software')
+              version='0.2.1',
+              description='S.M.A.R.T. Software. Sprint mapping and annotation recommendation tool')
 
 # Todo change for production
-if ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ["*"]
-
+# if ALLOWED_HOSTS:
+#     ALLOWED_HOSTS = ["*"]
+#
 # app.add_middleware(
 #     CORSMiddleware,
 #     allow_origins=ALLOWED_HOSTS,

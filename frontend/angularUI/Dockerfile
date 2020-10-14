@@ -9,21 +9,13 @@ RUN npm install && \
     npm install --save @angular/animations
 
 COPY . /smart/
-# WORKDIR /smart/app
-
-
-# RUN npm build --prod --output-path=dist --build-optimizer=true
-# RUN npm run build --prod --build-optimizer=true --output-path=/var/www/smart_ui/dist
-RUN ng build --prod --build-optimizer=true --output-path=/smart/dist
-
-
+RUN ng build --prod --build-optimizer=true --output-path=/smart/dist && \
+    rm .dockerignore .gitignore Dockerfile angular.json browserslist package*.json \
+    tsconfig* && \
+    rm -rf node_modules/ service_conf/ src/ 
 
 FROM nginx:1.19.3-alpine
-#COPY ./service_conf/proxy_conf /etc/nginx/proxy_conf
+COPY ./service_conf/proxy.conf /etc/nginx/conf.d/proxy.conf
 COPY ./service_conf/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /smart/dist /var/www/smart_ui/
-
-# EXPOSE 80
-
-# CMD ["nginx", "-g", "daemon off;"]
-#  	root /var/www/s2r_mapping_tool/dist/angularUI;
+RUN rm /etc/nginx/conf.d/default.conf

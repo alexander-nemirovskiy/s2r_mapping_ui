@@ -8,11 +8,8 @@ services:
         dockerfile: Dockerfile
       network_mode: bridge
       restart: always
-#      volumes:
-#        - ./proxy_conf/proxy.conf:/etc/nginx/conf.d/
       ports:
         - "80:80"
-#        - "8081:80"
       command: ["nginx", "-g", "daemon off;"]
 
   s2r_api:
@@ -27,21 +24,6 @@ services:
     - ./input:/smart/input
     - ./output:/smart/output
     - ./uploads:/smart/uploads
-#    ports:
-#    - "8081:8081"
     command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081"]
     depends_on:
       - nginx_ws
-
-#  nginx_ws:
-#    image: nginx:latest
-#    container_name: nginx_prod
-#    network_mode: bridge
-#    volumes:
-#      - ./reverse_proxy:/etc/nginx/conf.d
-#      - ./dist:/var/www/s2r_mapping_tool/dist
-#    ports:
-#      - "80:80"
-#    depends_on:
-#      - s2r_api
-

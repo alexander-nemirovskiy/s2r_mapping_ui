@@ -5,9 +5,11 @@
         <form [formGroup]="selector_form" class="mapping-result">
             <mat-radio-group class="flex-container column" formControlName="mapping_options" (change)="onRadioChange($event)">
                 <mat-radio-button *ngFor="let term of mappingPair.mappingOptions; let i = index" 
+                    class="results"
                     [value]="term"
                     [checked]="i === 0">
-                    {{ term }}
+                    <div>{{ term }}</div>
+                    <div>{{ mappingPair.confidenceScores[i]}}</div>
                 </mat-radio-button>
                 <mat-radio-button value="other" name="custom_entry">
                     <mat-form-field>
@@ -21,7 +23,6 @@
     </div>
     <div class="flex-container row">
         <button mat-button (click)="deleteMapping()">Delete</button>
-        <!-- <button mat-raised-button (click)="confirmMapping()" [disabled]="validOptionSelected()" color="primary">Confirm</button> -->
         <button mat-raised-button (click)="confirmMapping()" [disabled]="!valid_selection" color="primary">Confirm</button>
     </div>
 </div>

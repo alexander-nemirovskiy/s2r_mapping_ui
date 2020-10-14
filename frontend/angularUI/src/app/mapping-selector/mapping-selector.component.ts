@@ -50,7 +50,7 @@ export class MappingSelectorComponent implements OnInit {
         if (this.checkValidOptionSelected()){
             let v = ''
             v = value === "other"? this._custom_option: value;
-            let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, [v]);
+            let m: MappingPair = new MappingPair(this.mappingPair.sourceTerm, [v], [100]);
             this.mappingService.confirmMappingPair(m);
             this.logger.log(`Selection performed: [${v}]`);
             this.dismissEvent.emit(this.mappingPair);
