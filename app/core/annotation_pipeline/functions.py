@@ -497,7 +497,8 @@ def class_line_checker(input_xml_term, input_line):
     validation = False
 
     # Validate if the line is the
-    if all(x in line for x in ['public', 'class', '{']):
+    # if all(x in line for x in ['public', 'class']):
+    if ' class ' in line:
         line_validation = True
         line_elements = line.split()
         class_name_idex = line_elements.index('class') + 1
@@ -531,7 +532,7 @@ def attribute_line_checker(input_xml_term, input_line):
     validation = False
 
     # Validate if the line is the
-    if all(x in line for x in ['@XmlAttribute(name', '=']):
+    if all(x in line for x in ['@XmlAttribute(name', '=']) or all(x in line for x in ['@XmlElement(name', '=']):
         line_validation = True
 
         # Splitting the line, find the last element and dropping ) and " chars which are the results of JAXB.
@@ -724,7 +725,7 @@ def rdf_object_extractor_v2(graph):
                     if object_str == 'Class':
                         class_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                         obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
-                    elif object_str == 'Property':
+                    elif object_str == 'Property' or object_str == 'ObjectProperty' or object_str == 'DatatypeProperty':
                         property_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                         obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
                     else:
@@ -738,7 +739,7 @@ def rdf_object_extractor_v2(graph):
                                 # class_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                                 # obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
                                 note = subject_str + ' | individual | ' + object_str  # Creating the note to be written separately
-                            elif actual_object == 'Property':
+                            elif actual_object == 'Property' or object_str == 'ObjectProperty' or object_str == 'DatatypeProperty':
                                 # property_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
                                 # obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
                                 note = subject_str + ' | individual | ' + object_str  # Creating the note to be written separately

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
@@ -64,7 +65,8 @@ async def generate_mapping(
             )
         else:
             name_id, pairs = await generate_mapping_pairs(source_file, target_file)
-            return MappingPairsResponse(file_id=name_id, pairs=pairs)
+            return MappingPairsResponse(file_id=name_id, terms=pairs['source_term'], options=pairs['mapped_term'],
+                                        scores=pairs['confidence_score'])
 
 
 @router.get("/mapping/autoselect", response_model=OkResponse)
@@ -102,7 +104,6 @@ async def confirm_mappings(
         )
     else:
         val = list(map(extract_pair, confirmedPairs.pairs))
-        cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term'])
-        cleaned_df['confidence_score'] = 100
+        cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term', 'confidence_score'])
         await generate_annotations(cleaned_df, False, confirmedPairs.file_id)
         return {'task_completed': True, 'message': 'mapping completed'}

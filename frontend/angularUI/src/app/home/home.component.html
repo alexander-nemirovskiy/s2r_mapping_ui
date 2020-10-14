@@ -1,5 +1,12 @@
 <div class="flex-container column">
     <file-manager></file-manager>
     <mapping-container *ngIf="showMappingChild" (finalizeMapping)="onEndMapping($event)"></mapping-container>
-    <mapping-download *ngIf="!showMappingChild"></mapping-download>
+    <mapping-download *ngIf="!showMappingChild && !mapping_error"></mapping-download>
+    <div id="mapping_error" class="flex-container row content mat-elevation-z2" *ngIf="mapping_error">
+        <div id="error_icon"><mat-icon>error_outline</mat-icon></div>
+        <div>
+            <p>{{ process_error }}</p>
+            <p>Please try again. If the error persists contact the administration</p>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,7 @@
+backend/input/model.bin
+backend/input/jaxb*.jar
+frontend/angularUI/node_modules/
+frontend/angularUI/.vscode/
+frontend/angularUI/angularUI.code-workspace
+jaxb_impl/
+docs/

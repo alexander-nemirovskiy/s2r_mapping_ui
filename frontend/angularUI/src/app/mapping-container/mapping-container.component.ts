@@ -30,13 +30,14 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
         private logger: LoggerService) { }
 
     ngOnInit(): void {
-        this.mapping_error = false;
+        this.resetErrorField();
         this.subs.add(
             this.notifier.notification$.subscribe(
                 message => {
                     this.visible = message ? true: false;
                     this.logger.log('Notification received');
                     this.localMappings = null;
+                    this.resetErrorField();
                     if (message && message.sourceName && message.targetName) {
                         this.subs.add(this.mappingService.startMapping(message.sourceName, message.targetName)
                             .pipe(
@@ -69,10 +70,15 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
         this.subs.add(this.mappingService.finalizeMappings(this.confirmedItems)
             .subscribe(
                 data => {
+                    this.resetErrorField();
                     this.finalizeMapping.emit(this);
                     this.logger.log('Confirmation choices received. Ready to delete')
                 },
-                error => {alert(error)}
+                error => {
+                    this.mapping_error = true;
+                    this.mapping_error_message = error.message? error.message: JSON.stringify(error.detail);
+                    this.finalizeMapping.emit(error);
+                }
             )
         );
     }
@@ -84,6 +90,11 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.subs.unsubscribe();
         this.logger.log(`Destroy call made for component ${this}`);
+    }
+
+    private resetErrorField(){
+        this.mapping_error = false;
+        this.mapping_error_message = '';
     }
 
 }

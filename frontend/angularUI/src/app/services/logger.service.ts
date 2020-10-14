@@ -21,5 +21,9 @@ export class LoggerService {
     }
 
     error(msg: any) { console.error(msg); }
-    warn(msg: any)  { console.warn(msg); }
+    warn(msg: any)  { 
+        if (!environment.production){
+            console.warn(msg);
+        }
+    }
 }

@@ -40,10 +40,12 @@ export class MappingService {
                 }),
                 map((data) => {
                     localStorage.setItem('file_id', data['file_id'])
-                    let dataPairs: object = data['pairs']
                     let ret: MappingPair[] = []
-                    Object.keys(dataPairs).forEach(key => {
-                        const element = new MappingPair(key,dataPairs[key]);
+                    let terms: object = data['terms']
+                    let options: object = data['options']
+                    let scores: object = data['scores']
+                    Object.keys(terms).forEach(key => {
+                        const element = new MappingPair(terms[key],options[key],scores[key]);
                         ret.push(element)
                     });
                     return ret;
@@ -57,13 +59,18 @@ export class MappingService {
 
     finalizeMappings(pairs: MappingPair[]){
         const confirmedPairs: object[] = pairs.map(p => {
-            return { [p.sourceTerm]: p.mappingOptions[0] };
+            return { [p.sourceTerm]: { 
+                [p.mappingOptions[0]]: p.confidenceScores[0] }
+            };
         })
         
         this.logger.warn(`Just checking: ${confirmedPairs}`);
         this.logger.dir(confirmedPairs);
         let f_id: string = localStorage.getItem(environment.FILE_ID);
-        let body = JSON.stringify({ "file_id":  f_id, "pairs": confirmedPairs})
+        let body = JSON.stringify({ 
+            "file_id":  f_id, 
+            "pairs": confirmedPairs
+        })
         let options = { 
             headers: new HttpHeaders({
                 'Content-Type': 'application/json' 
@@ -73,10 +80,14 @@ export class MappingService {
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),
                 catchError( err => {
-                    this.logger.error('Finalize mappings failed: ' + err);
-                    this.logger.dir(err);
-                    const message = 'Sorry, POST pair confirmation failed!';
-                    return throwError(message);
+                    if (err.detail && err.status_code){
+                        const message = `Annotation process failed:\nCODE - [${err.status_code}]\nDETAILS - ${err.detail}`;
+                        if (err.detail.code && err.detail.message){
+                            return throwError(new APIError(err.status_code, err.detail, err.detail.code, err.detail.message));
+                        }
+                        return throwError(new APIError(err.status_code, err.detail, null, message));
+                    }
+                    return throwError(new APIError("500", null, null, "Unexpected server error"));
                 })
             );
     }

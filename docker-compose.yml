@@ -1,29 +1,29 @@
 version: '3'
 services:
+  nginx_ws:
+      container_name: s2r_web_app
+      image: s2r_ui
+      build:
+        context: ./frontend/angularUI
+        dockerfile: Dockerfile
+      network_mode: bridge
+      restart: always
+      ports:
+        - "80:80"
+      command: ["nginx", "-g", "daemon off;"]
 
   s2r_api:
     container_name: s2r_mapping_tool
     image: s2r_img
     build:
-      context: ./backend/app
+      context: .
       dockerfile: Dockerfile
     network_mode: bridge
     restart: always
     volumes:
-    - ./input:/s2r_mapping_tool/input
-    - ./output:/s2r_mapping_tool/output
-    - ./uploads:/s2r_mapping_tool/uploads
-    ports:
-    - "8080:8080"
-
-  nginx_ws:
-    image: nginx:latest
-    container_name: nginx_prod
-    network_mode: bridge
-    volumes:
-      - ./reverse_proxy:/etc/nginx/conf.d
-      - ./dist:/var/www/s2r_mapping_tool/dist
-    ports:
-      - "80:80"
+    - ./input:/smart/input
+    - ./output:/smart/output
+    - ./uploads:/smart/uploads
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081"]
     depends_on:
-      - s2r_api
+      - nginx_ws
