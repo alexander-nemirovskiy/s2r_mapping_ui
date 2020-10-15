@@ -1,10 +1,10 @@
 # Shift2Rail - Entity Mapping Project 
 
-Library for Shift2Rail project for performing automatic entity mappings
+Shift2Rail application project for automatic entity mappings.
 
 ## Requirements
 ### Informations
-The current software version 0.1.4 is a web application that consists of two docker containers activated through a 
+The current software version 0.2.1 is a web application that consists of two docker containers activated through a 
 docker-compose file provided with the installation package. 
 
 A backend API container is created exposing a process running on the host machine and listening on port 8080 by default. 
@@ -36,6 +36,50 @@ The minimal set of requirements are defined as follows:
  
  
 ## Usage
+### Contents
+The application is delivered in a package containing the necessary modules to build and run the program. It expects the 
+host machine to have at least docker installed and available on it. The default installation process requires some ports 
+to be open as well for either internal usage or external calls to the program.
+
+This package contains the following items:
+* an app folder containing the source code of the python backend.
+* a frontend/angularUI folder containing the UI project to be compiled, built and later exposed through a web server.
+* a Dockerfile and a docker-compose files to build and start the application.
+* three folders, namely uploads, input, output that contain, or will contain, all the additional files used or generated 
+by the application such as a model binary file and a jar file used by the backend services.
+
+### Configuration and setup
+This is the default configuration option. It will be using ports 80 and 8081 on the host machine to run the application. 
+These settings can be changed at any time according to the host machine availability and setup. 
+The following steps describe what needs to be done in order to launch the application without any change to the settings.
+* Extract the contents of the provided package into a folder. From now on this will be referred as the root folder 
+of the application.
+* Navigate to the frontend/angularUI folder in order to change the IP address of the server that will be 
+hosting the frontend application
+    * in src/environments folder open the environment.prod.ts file and change the API_Endpoint value to the host 
+    machine's actual IP address, leaving the api/v1 suffix as is. The final value should look like this: 
+        
+        
+        http(s)://your.hostname.or.domain/api/v1
+* Navigate back to the root directory and start the docker-compose process using the docker-compose.yml. This will start
+the build process of the application for both frontend and backend parts.	
+* (This step is optional if the package already contains the mentioned files. If those files have been downloaded 
+separately this step is mandatory) Once the building process is finished put the jaxb_impl-0.1.3.jar and the model.bin 
+files into the input folder.
+* Now start the docker containers using docker-compose once more.
+
+If it is required to change the internal API service port, both the docker-compose file in the root folder and the nginx
+proxy configuration file need to be modified according to the desired configuration: change the port number in the 
+command line of the docker-compose file that starts the uvicorn server for the API. If the NginX service is used as 
+well the aforementioned change shall be reflected in the upstream block of the proxy.conf file. Both files shall 
+contain the same port number for the application to work unless another custom service is to be used instead of NginX 
+otherwise the API won't work. To summarize the needed steps:
+* In the root folder, open the docker-compose file and change the last parameter in line command: [...] that 
+indicates the port on which the API will be running
+* Navigate to the frontend/angularUI/service_conf folder and open the proxy.conf file with a standard text editor.
+* The setting inside upstream block represents the internal process port the backend API will be running on and to which
+the NginX will forward http requests. This is not meant to be exposed to an external user necessarily and it is for 
+internal use only. Change the parameters to be identical to the choice made in the previous step.
 
 
 ## Maintainers

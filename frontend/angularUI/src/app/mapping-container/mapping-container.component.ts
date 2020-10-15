@@ -64,9 +64,6 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
     }
 
     finalizeChoice(){
-        this.confirmedItems.forEach((item) => {
-            console.log(item.sourceTerm)
-        })
         this.subs.add(this.mappingService.finalizeMappings(this.confirmedItems)
             .subscribe(
                 data => {
