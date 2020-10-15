@@ -22,10 +22,6 @@ logger = logging.getLogger('core-executor')
 async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
     logging.info('Creating folder setup')
     input_location = input_folder.joinpath(filename_uuid)
-    # input_location.mkdir(parents=True)
-    # logging.info('Copying files to required location')
-    # copyfile(source_file, input_location.joinpath(SOURCE_FILE))
-    # copyfile(target_file, input_location.joinpath(TARGET_FILE))
     logging.info('Executing java command in separate shell')
     command = ' '.join(['java', '-jar', str(input_folder.joinpath(JAR_NAME)),
                         JAR_INPUT_PARAM, str(source_file), JAR_OUTPUT_PARAM,
