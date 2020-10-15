@@ -7,6 +7,9 @@ import { MappingNotifierService } from '../services/mapping-notifier.service';
 import { FileService } from '../services/file.service';
 import { LoggerService } from '../services/logger.service';
 
+const source_extension = ['.xsd', '.xml']
+const target_extension = ['.owl', '.ttl']
+
 @Component({
     selector: 'file-select',
     templateUrl: './file-select.component.html',
@@ -49,11 +52,10 @@ export class FileSelectComponent implements OnInit {
 
     selectionChange($event){
         if($event.selectedStep === this.source_file_select){
-            this.sourceFiles$ = this.fileService.getFiles('xsd')
+            this.sourceFiles$ = this.fileService.getFiles(source_extension)
         }
         if($event.selectedStep === this.target_file_select){
-            // this.targetFiles$ = this.fileService.getFiles('owl')
-            this.targetFiles$ = this.fileService.getFiles()
+            this.targetFiles$ = this.fileService.getFiles(target_extension)
         }
     }
 

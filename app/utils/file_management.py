@@ -1,7 +1,7 @@
 from shutil import copyfileobj
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Set
 
 from fastapi import UploadFile
 
@@ -37,13 +37,13 @@ def handle_upload_file(
         tmp_path.unlink()
 
 
-def retrieve_upload_files_by_extension(extension: str = '') -> List[str]:
+def retrieve_upload_files_by_extension(extensions: List[str] = '') -> List[str]:
     path = Path.cwd().joinpath(UPLOAD_FOLDER)
     filenames = []
     for entry in path.iterdir():
         if entry.is_file():
-            if extension:
-                if entry.name.lower().endswith('.' + extension):
+            if extensions:
+                if entry.suffix.lower() in extensions:
                     filenames.append(entry.name)
             else:
                 filenames.append(entry.name)
@@ -56,3 +56,7 @@ def retrieve_upload_file_by_filename(filename: str) -> Optional[Path]:
         if entry.is_file() and entry.name == filename:
             return entry
     return None
+
+
+def check_allowed_extensions(extensions: Set[str], allowed: Set[str]) -> bool:
+    return extensions.issubset(allowed)
