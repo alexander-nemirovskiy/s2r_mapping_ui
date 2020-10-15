@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog'
 
 import { FileService } from '../services/file.service';
 import { forkJoin } from 'rxjs';
+import { LoggerService } from '../services/logger.service';
 
 @Component({
     selector: 'dialog-upload',
@@ -15,7 +16,8 @@ export class DialogUploadComponent implements OnInit {
 
     constructor(
       public dialogRef: MatDialogRef<DialogUploadComponent>, 
-      public uploadService: FileService) { }
+      public uploadService: FileService,
+      private logger: LoggerService) { }
     
     ngOnInit(): void { }
 
@@ -32,6 +34,11 @@ export class DialogUploadComponent implements OnInit {
     
     onFilesAdded(){
         const files: { [key: string]: File } = this.file.nativeElement.files;
+        if(this.file.nativeElement.files.length > 5){
+            this.logger.warn('More than 5 files selected for upload!');
+            alert("You are only allowed to upload a maximum of 5 files at once");
+            return false;
+        }
         for (let key in files) {
             if (!isNaN(parseInt(key))) {
                 this.files.add(files[key]);
@@ -47,8 +54,6 @@ export class DialogUploadComponent implements OnInit {
       
         // set the component state to "uploading"
         this.uploading = true;
-      
-        // start the upload and save the progress map
         this.progress = this.uploadService.upload(this.files);
       
         // convert the progress map into an array
@@ -58,8 +63,6 @@ export class DialogUploadComponent implements OnInit {
         }
       
         // Adjust the state variables
-      
-        // The OK-button should have the text "Finish" now
         this.primaryButtonText = 'Finish';
       
         // The dialog should not be closed while uploading
