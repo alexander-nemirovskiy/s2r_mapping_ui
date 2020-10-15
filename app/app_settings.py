@@ -28,13 +28,16 @@ raw_csv_unstructured = True  # True if the out put of the W2V is unstructured
 automatic_selection = False  # True if the user is willing to choose just the top scored mappings.
 
 # Intermediate files naming conventions
-source_rw = 's_SumArray3'
-target_rw = 't_SumArray3'
+source_rwc = 's_SumArray3c'
+source_rwd = 's_SumArray3d'
+source_rwo = 's_SumArray3o'
+target_rwc = 't_SumArray3c'
+target_rwd = 't_SumArray3d'
+target_rwo = 't_SumArray3o'
 
-write_pathVecRaw = 'SumVecRaw'
-write_pathVecThr = 'SumVecThr'
-write_pathVecOrgRaw = 'SumVecOrgRaw'
-write_pathVecOrgThr = 'SumVecOrgThr'
+writepathCompoundc= 'Sumst_MatchCountc'
+writepathCompoundd= 'Sumst_MatchCountd'
+writepathCompoundo= 'Sumst_MatchCounto'
 
 MAPPING_OUTPUT_FILE = 'mapping_results_'
 CLEANED_FILE = 'cleaner_'
