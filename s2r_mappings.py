@@ -1,6 +1,17 @@
 import uvicorn
 from app.main import app
 
+
+def prepare_host_structure(filename_uuid):
+    filename_location = Path.cwd().joinpath('output', filename_uuid)
+    input_location = Path.cwd().joinpath('input', filename_uuid)
+    if not filename_location.is_dir():
+        filename_location.mkdir(parents=True)
+    if not input_location.is_dir():
+        input_location.mkdir(parents=True)
+    return
+
+
 if __name__ == '__main__':
     import sys
 
@@ -13,6 +24,7 @@ if __name__ == '__main__':
         sourcefile = Path.cwd().joinpath(UPLOAD_FOLDER, sys.argv[1])
         targetfile = Path.cwd().joinpath(UPLOAD_FOLDER, sys.argv[2])
         filename_uuid: str = str(uuid4()).split('-')[0]
+        prepare_host_structure(filename_uuid)
 
         status = start_mapping(sourcefile, targetfile, filename_uuid)
         print(status)
