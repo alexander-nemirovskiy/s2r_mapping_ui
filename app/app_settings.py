@@ -19,8 +19,8 @@ SELECTOR_FOLDER = 'selector'
 # EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'
 EXT_MODEL_NAME = 'model.bin'
 
-ALLOWED_INPUT_EXTENSIONS = ['xml', 'xsd']
-ALLOWED_ONTOLOGY_EXTENSIONS = ['ttl', 'owl']
+ALLOWED_INPUT_EXTENSIONS = {'.xml', '.xsd'}
+ALLOWED_ONTOLOGY_EXTENSIONS = {'.ttl', '.owl'}
 
 
 # * Other Variables

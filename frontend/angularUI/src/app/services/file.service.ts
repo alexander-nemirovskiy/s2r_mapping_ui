@@ -4,6 +4,7 @@ import { Observable, Subject, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoggerService } from './logger.service';
 import { tap, catchError, map } from 'rxjs/operators';
+import { APIError } from '../models/Errors';
 
 const uploadURL = environment.API_Endpoint + '/uploads'
 const filesURL = environment.API_Endpoint + '/files'
@@ -15,18 +16,26 @@ export class FileService {
     
     constructor(private http: HttpClient, private logger: LoggerService) {}
     
-    getFiles(extensionFilter: string = ''): Observable<string[]> {
+    getFiles(extensionFilter: string[] = []): Observable<string[]> {
         let param = {}
         if (extensionFilter){
-            param = {'extension': extensionFilter}
+            param = {'extensions': extensionFilter}
         }
         return this.http.get<string[]>(filesURL, { params: param })
             .pipe(
                 tap(() => this.logger.log('fetched files from server')),
                 catchError( err => {
-                    this.logger.error('GET failed: ' + err);
-                    const message = 'Sorry, GET files failed!';
-                    return throwError(message);
+                    if (err.error) {
+                        let error = err.error;
+                        if(error.detail && err.status && err.statusText){
+                            const message = `File retrieval failed:\nCODE - [${err.statusText}]\nDETAILS - ${error.detail}`;
+                            if (error.detail.code && error.detail.message){
+                                return throwError(new APIError(error.status, error.detail, error.detail.code, error.detail.message));
+                            }
+                            return throwError(new APIError(err.status, error.detail, null, message));
+                        }
+                    }
+                    return throwError(new APIError("500", null, null, "Unexpected server error"));
                 }),
                 map((data: string[]) => data)
             );

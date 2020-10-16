@@ -14,12 +14,25 @@ from .annotation_pipeline.Step_1_cleaner_selector import cleaner, selector
 from .annotation_pipeline.Step_2_type_identification_to_java_annotating \
     import type_identifier_to_java_annotator
 from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR_OUTPUT_FILE, SOURCE_FILE, TARGET_FILE, \
-    MAPPING_OUTPUT_FILE, CLEANED_FILE, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM
+    MAPPING_OUTPUT_FILE, CLEANED_FILE, SELECTOR_FOLDER, JAR_NAME, JAR_INPUT_PARAM, JAR_OUTPUT_PARAM, WORKER_NUM, \
+    ALLOWED_INPUT_EXTENSIONS, ALLOWED_ONTOLOGY_EXTENSIONS
+from ..utils.file_management import check_allowed_extensions
 
 logger = logging.getLogger('core-executor')
 
 
-async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path, target_file: Path):
+async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: Path):
+    """
+    
+    Args:
+        input_folder: 
+        filename_uuid: 
+        source_file: 
+
+    Returns:
+
+    """
+
     logging.info('Creating folder setup')
     input_location = input_folder.joinpath(filename_uuid)
     logging.info('Executing java command in separate shell')
@@ -46,33 +59,40 @@ async def process_xsd_file(input_folder: Path, filename_uuid: str, source_file: 
 
 
 async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[str, DataFrame]:
+    """
+    This method makes a separate process to handle the cumbersome mapping process without impacting the current event
+    loop. Firstly it prepares the folder structure necessary to receive all the intermediate logs and the outcome files
+    the process generates throughout its execution. Then it forwards the given xsd ``source_file`` to a parsing process
+    that invokes the jaxb jar in order to generate final java classes to annotate later in the program flow.
+    At the end of its execution, the method groups received mappings by their source term and sorts those groups by
+    highest confidence score.
+    
+    Args:
+        source_file: the xsd file that defines the java classes
+        target_file: the ontology file which will handle mapping suggestions
+
+    Returns:
+        tuple: a tuple containing:
+            - filename_uuid ([str]): hash for the current call
+            - sorted_group ([DataFrame]): a ``DataFrame`` containing all mapping pairs grouped by their source term and sorted by
+            highest confidence score
+    """
+    
     faulthandler.enable()
 
     filename_uuid: str = str(uuid4()).split('-')[0]
-    created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
-    filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, filename_uuid)
-    input_location = Path.cwd().joinpath(INPUT_FOLDER, filename_uuid)
-    if not filename_location.is_dir():
-        filename_location.mkdir(parents=True)
-    if not input_location.is_dir():
-        input_location.mkdir(parents=True)
-    logging.info('Copying files to required OUTPUT location')
-    copyfile(source_file, filename_location.joinpath(SOURCE_FILE))
-    copyfile(target_file, filename_location.joinpath(TARGET_FILE))
-    logging.info('Copying files to required INPUT location')
-    copyfile(source_file, input_location.joinpath(SOURCE_FILE))
-    copyfile(target_file, input_location.joinpath(TARGET_FILE))
+    created_filename, filename_location = await prepare_host_structure(filename_uuid, source_file, target_file)
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
     getXsdStatus = ''
     try:
-        await process_xsd_file(input_folder, filename_uuid, source_file, target_file)
-        logger.info('Created xsd task')
-        loop = asyncio.get_running_loop()
-        logger.info('Starting executor for mapping process')
-        with ProcessPoolExecutor() as pool:
-            logger.info('Using executor pool')
-            getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
-            logger.info('Created file: ' + created_filename)
+        await process_xsd_file(input_folder, filename_uuid, source_file)
+        # logger.info('Created xsd task')
+        # loop = asyncio.get_running_loop()
+        # logger.info('Starting executor for mapping process')
+        # with ProcessPoolExecutor() as pool:
+        #     logger.info('Using executor pool')
+        #     getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+        #     logger.info('Created file: ' + created_filename)
 
         logger.info('Exited executor pool block')
     except Exception as e:
@@ -94,7 +114,33 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
 
     sorted_group = cleaner_df.sort_values('confidence_score', ascending=False).groupby('source_term', as_index=False)\
         [['mapped_term', 'confidence_score']].agg(lambda x: list(x))
-    return filename_uuid, sorted_group.to_dict()
+    return filename_uuid, sorted_group
+
+
+async def prepare_host_structure(filename_uuid, source_file, target_file) -> Tuple[str, Path]:
+    created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
+    filename_location = Path.cwd().joinpath(OUTPUT_FOLDER, filename_uuid)
+    input_location = Path.cwd().joinpath(INPUT_FOLDER, filename_uuid)
+    if not filename_location.is_dir():
+        filename_location.mkdir(parents=True)
+    if not input_location.is_dir():
+        input_location.mkdir(parents=True)
+
+    if not (check_allowed_extensions({source_file.suffix}, ALLOWED_INPUT_EXTENSIONS) and
+            check_allowed_extensions({target_file.suffix}, ALLOWED_ONTOLOGY_EXTENSIONS)):
+        raise API_Exception(ErrorCode.GENERIC, 'Wrong file extension selected for mapping.\n'
+                                               'Avaliable extensions for source files include: '
+                                               f'{",".join(ALLOWED_INPUT_EXTENSIONS)}\n'
+                                               'Avaliable extensions for ontology files include: '
+                                               f'{",".join(ALLOWED_ONTOLOGY_EXTENSIONS)}\n')
+
+    logging.info('Copying files to required OUTPUT location')
+    copyfile(source_file, filename_location.joinpath(SOURCE_FILE + source_file.suffix))
+    copyfile(target_file, filename_location.joinpath(TARGET_FILE + target_file.suffix))
+    logging.info('Copying files to required INPUT location')
+    copyfile(source_file, input_location.joinpath(SOURCE_FILE + source_file.suffix))
+    copyfile(target_file, input_location.joinpath(TARGET_FILE + target_file.suffix))
+    return created_filename, filename_location
 
 
 async def generate_annotations(cleaner_df: DataFrame, automatic: bool, file_id: str):
