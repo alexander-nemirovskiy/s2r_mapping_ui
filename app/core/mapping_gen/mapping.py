@@ -5,6 +5,7 @@ from time import time
 from typing import List, Any, Union
 from uuid import uuid4
 
+
 from .MatchVocab import get_vocab_list, matchCompoundToVocab
 from .SimilarWordbyModel import getSimilarWordAvg
 from .TwoDMatrixOperations import readFile, splitToList

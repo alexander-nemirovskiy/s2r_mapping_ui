@@ -75,7 +75,14 @@ async def generate_mapping(
         source_filename: str,
         target_filename: str
 ):
-    """
+    """Generates mapping pairs suggestions from an ontology and an input structured file.
+
+    Takes two filenames referring to existing files in the working directory: the first file must be written in a
+    structured format while the second one should be an ontology. The application then generates mapping recommendations
+    to be used in the annotation process that should follow. In the meantime it converts the source file into
+    corresponding Java classes using Java Architecture for XML Binding directives and stores them for future use.
+    The process registers a unique code identifier for the current call so that annotated files can be retrieved later on
+    using the same information.
 
     Parameters
     ----------
@@ -143,6 +150,59 @@ async def autogenerate_mapping(
         source_filename: str,
         target_filename: str
 ):
+    """Generates annotated Java files from an ontology and an input structured file using best-match pairing to select
+    pairs
+
+    Takes two filenames referring to existing files in the working directory: the first file must be written in a
+    structured format while the second one should be an ontology. The application then generates mapping recommendations
+    to be used in the annotation process that should follow. In the meantime it converts the source file into
+    corresponding Java classes using Java Architecture for XML Binding directives.
+
+    Annotations are generated for these java classes choosing the best-match for the mapping pairing using highest
+    confidence score rating defined throughout the generation process.
+    Lastly, a unique code identifier for the current call is returned so that annotated files can be retrieved later on
+    using the same information.
+
+    Parameters
+    ----------
+    source_filename : `str`
+       source filename with extension suffix existing in ``upload`` folder.
+
+       Allowed extensions for source file
+       - xsd
+       - xml
+
+    target_filename : `str`
+       target filename with extension suffix existing in ``upload`` folder.
+
+       Allowed extensions for target file
+       - owl
+       - ttl
+
+    Returns
+    -------
+    file_id: `str`
+       All files matching the filter, if any.
+
+    terms: `dict` [`int`, `str`]
+       asd
+
+    options: `dict` [`int`, `list` [`str`]]
+       qwe
+
+    scores: `dict` [`int`, `list` [`int`]]
+
+    Raises
+    ------
+    `HTTPException`:
+       Raised if either file has not been selected or could not be found
+       resulting in a BadRequest response if filter criteria have not been met
+
+    `API_Exception`:
+       Raised if something happens during the mapping process. Check `detail` message to gather
+       additional information about what happened.
+    """
+
     if not (source_filename and target_filename):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -158,11 +218,10 @@ async def autogenerate_mapping(
             )
         else:
             name_id, pairs_df = await generate_mapping_pairs(source_file, target_file)
-            # TODO check for breaking code
-            # pairs = pairs_df.to_dict()
-            new_df = pairs_df.apply(lambda x: x.str[0])
-            await generate_annotations(pairs_df, True, name_id)
-            return {'task_completed': True, 'message': 'mapping completed'}
+            pairs_df['confidence_score'] = [cs[0] for cs in pairs_df['confidence_score']]
+            pairs_df['mapped_term'] = [mt[0] for mt in pairs_df['mapped_term']]
+            await generate_annotations(pairs_df, automatic=True, file_id=name_id)
+            return {'task_completed': True, 'message': f'{name_id}'}
 
 
 @router.post("/mapping/pairs")

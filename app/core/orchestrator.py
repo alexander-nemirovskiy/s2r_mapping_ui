@@ -86,13 +86,13 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     getXsdStatus = ''
     try:
         await process_xsd_file(input_folder, filename_uuid, source_file)
-        # logger.info('Created xsd task')
-        # loop = asyncio.get_running_loop()
-        # logger.info('Starting executor for mapping process')
-        # with ProcessPoolExecutor() as pool:
-        #     logger.info('Using executor pool')
-        #     getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
-        #     logger.info('Created file: ' + created_filename)
+        logger.info('Created xsd task')
+        loop = asyncio.get_running_loop()
+        logger.info('Starting executor for mapping process')
+        with ProcessPoolExecutor() as pool:
+            logger.info('Using executor pool')
+            getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+            logger.info('Created file: ' + created_filename)
 
         logger.info('Exited executor pool block')
     except Exception as e:
