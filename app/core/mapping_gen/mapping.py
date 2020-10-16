@@ -3,7 +3,7 @@ import threading
 from pathlib import Path
 from time import time
 from typing import List, Any, Union
-from uuid import uuid4
+
 
 from .MatchVocab import get_vocab_list, matchCompoundToVocab
 from .SimilarWordbyModel import getSimilarWordAvg
@@ -18,7 +18,6 @@ from ..commons import API_Exception, ErrorCode
 from ...app_settings import EXT_MODEL_NAME, UPLOAD_FOLDER, OUTPUT_FOLDER, MAPPING_FOLDER, source_rw, target_rw, \
     write_pathVecRaw, write_pathVecThr, write_pathVecOrgRaw, write_pathVecOrgThr, MAPPING_OUTPUT_FILE, INPUT_FOLDER
 
-# out_folder = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
 out_folder = Path.cwd().joinpath(OUTPUT_FOLDER)
 logger = logging.getLogger('mapping_generator')
 lock = threading.Lock()
@@ -44,7 +43,6 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
     modelMatch_T = getSimilarWordAvg(matchVocab_T, model, numberofwords)
     logger.info("\n\n\nStep 4: \nGot Similar Words from model")
 
-    # mapping_output_location = Path.cwd().joinpath(OUTPUT_FOLDER, MAPPING_FOLDER)
     mapping_output_location = Path.cwd().joinpath(OUTPUT_FOLDER, unique_file_id)
     if not mapping_output_location.is_dir():
         raise Exception(f'Output folder for {unique_file_id} is missing in STEP 4.')
