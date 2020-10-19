@@ -270,7 +270,7 @@ def df_col_adjuster(df: DataFrame, user_specified_conversion_type):
     return df
 # -----------------------End of function--------------------------------- #
 
-
+# todo: to be removed
 def ttl_parser(input_ttl_file):
     """Function which takes a ttl file as input and returns list of terms and list of corresponding annotations"""
     ttl_file = input_ttl_file  # Input
