@@ -18,6 +18,7 @@ import { FileManagerComponent } from './file-manager/file-manager.component';
 import { FileSelectComponent } from './file-select/file-select.component';
 import { MappingContainerComponent } from './mapping-container/mapping-container.component';
 import { MappingDownloadComponent } from './mapping-download/mapping-download.component';
+import { ConfidenceScorePipe } from './services/score.pipe';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { MappingDownloadComponent } from './mapping-download/mapping-download.co
     MappingContainerComponent,
     FileManagerComponent,
     FileSelectComponent,
-    MappingDownloadComponent
+    MappingDownloadComponent,
+    ConfidenceScorePipe,
   ],
   imports: [
     BrowserModule,
