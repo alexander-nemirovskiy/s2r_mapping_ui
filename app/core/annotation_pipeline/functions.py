@@ -330,7 +330,7 @@ def unwanted_elements_remover(input_list):
     return item_list
 # -----------------------End of function--------------------------------- #
 
-
+# todo: to be removed
 def ttl_terms_references_extractor(input_ttl_file):
     """ Function to extract the terms from ttl file """
     ttl_file = input_ttl_file  # Input
@@ -447,7 +447,7 @@ def mapping_generator(annotated_dataframe, ttl_term_type_dataframe, save_locatio
         ttl_term = annotated_df.loc[ann_row]['ttl_term']
         for ttl_row in range(len(ttl_term_type_csv)):
             gtfs_term = ttl_term_type_csv.loc[ttl_row]['Subject']
-            if 'gtfs:'+ttl_term == gtfs_term:
+            if 'IT2Rail:'+ttl_term == gtfs_term:
                 ref_type = ttl_term_type_csv.loc[ttl_row]['Object']
                 if 'Class' in ref_type:
                     annotaion = '@RdfsClass("'+gtfs_term+'")'
@@ -677,13 +677,13 @@ def rdf_object_extractor(graph):
         if o == RDFS.Class:  # Check if the object of the current subject is a Class
             # print(s)
             class_temp = re.findall(r'#(\w+)', s)[0]
-            class_temp = 'gtfs:' + class_temp  # Adding gtfs: characters
+            class_temp = 'IT2Rail:' + class_temp  # Adding gtfs: characters
             obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
 
         if o == RDF.Property:  # Check if the object of the current subject is a Property
             # print(s)
             property_temp = re.findall(r'#(\w+)', s)[0]
-            property_temp = 'gtfs:' + property_temp  # Adding gtfs: characters
+            property_temp = 'IT2Rail:' + property_temp  # Adding gtfs: characters
             obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
 
     return obj_class_list, obj_property_list
@@ -723,10 +723,10 @@ def rdf_object_extractor_v2(graph):
                     # counter += 1
 
                     if object_str == 'Class':
-                        class_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
+                        class_temp = 'IT2Rail:' + subject_str  # Adding IT2Rail: characters
                         obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
                     elif object_str == 'Property' or object_str == 'ObjectProperty' or object_str == 'DatatypeProperty':
-                        property_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
+                        property_temp = 'IT2Rail:' + subject_str  # Adding IT2Rail: characters
                         obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
                     else:
                         objects_graph = graph.objects(subject=o, predicate=p)  # The object(s) graph of the given subject and predicate. Please pay attention, since we are looking for the objects(Class or Property) of the current object which refers to a gtfs term, we need to pass the current object (o) as the subject which we need to find its object(s) when the predicate = 'type'
@@ -736,11 +736,11 @@ def rdf_object_extractor_v2(graph):
 
                             # Note: here we are writing the old subject (subject_str) into the corresponding list
                             if actual_object == 'Class':
-                                # class_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
+                                # class_temp = 'IT2Rail:' + subject_str  # Adding IT2Rail: characters
                                 # obj_class_list.append(class_temp)  # Appending the object into the obj_class_list
                                 note = subject_str + ' | individual | ' + object_str  # Creating the note to be written separately
                             elif actual_object == 'Property' or object_str == 'ObjectProperty' or object_str == 'DatatypeProperty':
-                                # property_temp = 'gtfs:' + subject_str  # Adding gtfs: characters
+                                # property_temp = 'IT2Rail:' + subject_str  # Adding IT2Rail: characters
                                 # obj_property_list.append(property_temp)  # Appending the object into the obj_property_list
                                 note = subject_str + ' | individual | ' + object_str  # Creating the note to be written separately
                             else:
