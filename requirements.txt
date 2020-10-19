@@ -1,0 +1,14 @@
+aiofiles
+numpy
+fastapi
+gensim
+Owlready2
+pandas
+pydantic
+python-dateutil
+python-multipart
+rdflib
+starlette
+uvicorn
+uvloop
+xmlschema

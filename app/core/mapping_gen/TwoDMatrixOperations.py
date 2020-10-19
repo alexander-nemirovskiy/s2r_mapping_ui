@@ -1,8 +1,7 @@
 import re
 import numpy as np
 from .Preprocessing import getFileExtension
-from .ReadWriteFiles import readXsdFile, readOntology, readTurtle, readXmlFile, readOntologyClass, readOntologyProperty, \
-    readXsdFilecomplextype, readXsdFileElementAttribute, readElementAndAttribute
+from .ReadWriteFiles import readXsdFile, readOntology, readTurtle, readXmlFile
 
 
 def makeCompoundList(inputList):
@@ -61,48 +60,3 @@ def readFile(path, filename):
     elif (ext == ttl):
         fileread = readTurtle(path, filename)
         return fileread
-
-
-def readClass(path, filename):
-    owl = 'owl'
-    xsd = 'xsd'
-    ttl = 'ttl'
-    xml = 'xml'
-    ext = getFileExtension(filename)
-    if (ext == xsd):
-        fileread = readXsdFilecomplextype(path, filename)
-        return fileread
-    elif (ext == xml):
-        fileread = readXmlFile(path, filename)
-        return fileread
-    elif (ext == owl):
-        fileread = readOntologyClass(path, filename)
-        return fileread
-    elif (ext == ttl):
-        fileread = readTurtle(path, filename)
-        return fileread
-
-
-def readProperties(path, filename):
-    owl = 'owl'
-    xsd = 'xsd'
-    ttl = 'ttl'
-    xml = 'xml'
-    ext = getFileExtension(filename)
-    if (ext == xsd):
-        fileread = readXsdFileElementAttribute(path, filename)
-        return fileread
-    elif (ext == xml):
-        fileread = readXmlFile(path, filename)
-        return fileread
-    elif (ext == owl):
-        fileread = readOntologyProperty(path, filename)
-        return fileread
-    elif (ext == ttl):
-        fileread = readTurtle(path, filename)
-        return fileread
-
-
-def readtmp(path, filename):
-    fread = readElementAndAttribute(path, filename)
-    return fread
