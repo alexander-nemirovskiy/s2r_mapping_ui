@@ -9,7 +9,7 @@
                     [value]="term"
                     [checked]="i === 0">
                     <div>{{ term }}</div>
-                    <div>{{ mappingPair.confidenceScores[i]}}</div>
+                    <div>{{ mappingPair.confidenceScores[i] | confidenceScore}}</div>
                 </mat-radio-button>
                 <mat-radio-button value="other" name="custom_entry">
                     <mat-form-field>

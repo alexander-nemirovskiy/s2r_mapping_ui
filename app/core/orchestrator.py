@@ -83,7 +83,7 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
     filename_uuid: str = str(uuid4()).split('-')[0]
     created_filename, filename_location = await prepare_host_structure(filename_uuid, source_file, target_file)
     input_folder = Path.cwd().joinpath(INPUT_FOLDER)
-    getXsdStatus = ''
+    df = None
     try:
         await process_xsd_file(input_folder, filename_uuid, source_file)
         logger.info('Created xsd task')
@@ -91,7 +91,7 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         logger.info('Starting executor for mapping process')
         with ProcessPoolExecutor() as pool:
             logger.info('Using executor pool')
-            getXsdStatus = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
+            df = await loop.run_in_executor(pool, start_mapping, source_file, target_file, filename_uuid)
             logger.info('Created file: ' + created_filename)
 
         logger.info('Exited executor pool block')
@@ -99,20 +99,20 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         logger.warning('Exception during mapping: ' + str(e))
         raise API_Exception(ErrorCode.GENERIC, 'Mapping failed')
 
-    if not getXsdStatus:
+    if df is None:
         logger.warning('Mapping process terminated with an error. Please check')
         raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
         # TODO testing only
         # getXsdStatus = 'CamelCase'
         # created_filename = 'mapping.csv'
         # filename_location = Path.cwd().joinpath(INPUT_FOLDER)
+        # logger.info('Starting cleaning process...')
+        # df = cleaner(filename_location, created_filename, 'xml2ttl', getXsdStatus)
+        # logger.info('Cleaning process done!')
+        # df.to_csv(filename_location.joinpath(CLEANED_FILE + filename_uuid + '.csv'))
     faulthandler.disable()
-    logger.info('Starting cleaning process...')
-    cleaner_df = cleaner(filename_location, created_filename, 'xml2ttl', getXsdStatus)
-    logger.info('Cleaning process done!')
-    cleaner_df.to_csv(filename_location.joinpath(CLEANED_FILE + filename_uuid + '.csv'))
 
-    sorted_group = cleaner_df.sort_values('confidence_score', ascending=False).groupby('source_term', as_index=False)\
+    sorted_group = df.sort_values('confidence_score', ascending=False).groupby('source_term', as_index=False)\
         [['mapped_term', 'confidence_score']].agg(lambda x: list(x))
     return filename_uuid, sorted_group
 
@@ -135,11 +135,12 @@ async def prepare_host_structure(filename_uuid, source_file, target_file) -> Tup
                                                f'{",".join(ALLOWED_ONTOLOGY_EXTENSIONS)}\n')
 
     logging.info('Copying files to required OUTPUT location')
-    copyfile(source_file, filename_location.joinpath(SOURCE_FILE + source_file.suffix))
-    copyfile(target_file, filename_location.joinpath(TARGET_FILE + target_file.suffix))
+    # copyfile(source_file, filename_location.joinpath(SOURCE_FILE + source_file.suffix))
+    copyfile(source_file, filename_location.joinpath(SOURCE_FILE))
+    copyfile(target_file, filename_location.joinpath(TARGET_FILE))
     logging.info('Copying files to required INPUT location')
-    copyfile(source_file, input_location.joinpath(SOURCE_FILE + source_file.suffix))
-    copyfile(target_file, input_location.joinpath(TARGET_FILE + target_file.suffix))
+    copyfile(source_file, input_location.joinpath(SOURCE_FILE))
+    copyfile(target_file, input_location.joinpath(TARGET_FILE))
     return created_filename, filename_location
 
 

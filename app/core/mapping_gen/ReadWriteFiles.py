@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 import numpy as np
@@ -6,7 +5,6 @@ import csv
 import xml.dom.minidom as xp
 from rdflib import Graph
 from re import sub, findall
-from re import split as re_split
 import xml.etree.ElementTree as ET
 from owlready2 import get_ontology, re
 
@@ -52,20 +50,25 @@ def clean_split_elem_list(elem_list):
     return cleaned_elem_list
 
 
+def getprefix(inputlist):
+    nativedata = "xsd"
+    dataprop = []
+    objectprop = []
+    for i in inputlist:
+        prefix = re.split('[:]', i[1])[0]
+        suffix = i[0]
+        if prefix == nativedata:
+            dataprop.append(suffix)
+        else:
+            objectprop.append(suffix)
+    return dataprop, objectprop
+
+
 def getElementandAttribute(doc, attr):
     readElement = doc.getElementsByTagName(attr)
     listElement = []
     for m in readElement:
         f = m.getAttribute('name')
-        listElement.append(f)
-    return listElement
-
-
-def getElementandAttributeType(doc, attr):
-    readElement = doc.getElementsByTagName(attr)
-    listElement = []
-    for m in readElement:
-        f = m.getAttribute('type')
         listElement.append(f)
     return listElement
 
@@ -77,91 +80,42 @@ def getElementandAttributeNameType(doc, attr):
         elName = m.getAttribute('name')
         elAttr = m.getAttribute('type')
         tmpl = [elName, elAttr]
-    listElement.append(tmpl)
+        listElement.append(tmpl)
     return listElement
-
-
-def readElementAndAttribute(filepath, filename):
-    p = Path.joinpath(filepath, filename)
-    docread = xp.parse(str(p))
-    getElement = getElementandAttributeNameType(docread, 'xsd:element')
-    getAttribute = getElementandAttributeNameType(docread, 'xsd:attribute')
-
-    listofElements = list(filter(lambda x: x != '', getElement))
-    finallistofElements = list(dict.fromkeys(listofElements))
-
-    listofAttributes = list(filter(lambda x: x != '', getAttribute))
-    finallistofAttributes = list(dict.fromkeys(listofAttributes))
-    return finallistofElements, finallistofAttributes
 
 
 def readXsdFile(filepath, filename):
     p = Path.cwd().joinpath(filepath, filename)
-
     docread = xp.parse(str(p))
-    getElement1 = getElementandAttribute(docread, 'xs:element')
-    getElement2 = getElementandAttribute(docread, 'xsd:element')
-    getElement3 = getElementandAttribute(docread, 'xs:attribute')
-    getElement4 = getElementandAttribute(docread, 'xsd:attribute')
-    getElement5 = getElementandAttribute(docread, 'xsd:complexType')
-    getElement1.extend(getElement2 + getElement3 + getElement4 + getElement5)
-    listofElements = list(filter(lambda x: x != '', getElement1))
-    finallist = list(dict.fromkeys(listofElements))
-    return finallist
-
-
-def readXsdFilecomplextype(filepath, filename):
-    p = Path.joinpath(filepath, filename)
-    docread = xp.parse(str(p))
-    getElement = getElementandAttribute(docread, 'xsd:complexType')
-    listofElements = list(filter(lambda x: x != '', getElement))
-    finallist = list(dict.fromkeys(listofElements))
-    return finallist
-
-
-def readXsdFileElementAttribute(filepath, filename):
-    p = Path.joinpath(filepath, filename)
-    docread = xp.parse(str(p))
-    getElement1 = getElementandAttribute(docread, 'xsd:element')
-    getElement2 = getElementandAttribute(docread, 'xsd:attribute')
-    getElement1.extend(getElement2)
-    listofElements = list(filter(lambda x: x != '', getElement1))
-    finallist = list(dict.fromkeys(listofElements))
-    return finallist
+    getElement = getElementandAttributeNameType(docread, 'xsd:element')
+    getAttribute = getElementandAttributeNameType(docread, 'xsd:attribute')
+    getComplex = getElementandAttribute(docread, 'xsd:complexType')
+    getElement.extend(getAttribute)
+    listofElementsAttributes = list(filter(lambda x: x != '', getElement))
+    listofComplexTypes = list(filter(lambda x: x != '', getComplex))
+    dataproperties, objectproperties = getprefix(listofElementsAttributes)
+    finalClassList = list(dict.fromkeys(listofComplexTypes))
+    finaldataproperties = list(dict.fromkeys(dataproperties))
+    finalobjectproperties = list(dict.fromkeys(objectproperties))
+    return sorted(finalClassList), sorted(finaldataproperties), sorted(finalobjectproperties)
 
 
 def readOntology(filepath, filename):
     p = Path.cwd().joinpath(filepath, filename)
     onto = get_ontology(str(p)).load()
-    clist1 = list(onto.classes())
-    clist2 = list(onto.properties())
-    strlist1 = [str(i) for i in clist1]
-    strlist2 = [str(i) for i in clist2]
-    final_term1 = [re_split('[.]', w)[-1] for w in strlist1]
-    final_term2 = [re_split('[.]', w)[-1] for w in strlist2]
-    final_term = final_term1 + final_term2
-    finallist = list(dict.fromkeys(final_term))
-    return finallist
-
-
-def readOntologyClass(filepath, filename):
-    p = Path.joinpath(filepath, filename)
-    onto = get_ontology(str(p)).load()
-    clist1 = list(onto.classes())
-    strlist1 = [str(i) for i in clist1]
-    final_term1 = [re_split('[.]', w)[-1] for w in strlist1]
-    finallist = list(dict.fromkeys(final_term1))
-    return finallist
-
-
-def readOntologyProperty(filepath, filename):
-    p = Path.joinpath(filepath, filename)
-    onto = get_ontology(str(p)).load()
-    clist2 = list(onto.properties())
-    strlist2 = [str(i) for i in clist2]
-    final_term2 = [re_split('[.]', w)[-1] for w in strlist2]
-    finallist = list(dict.fromkeys(final_term2))
-    return finallist
+    clist = list(onto.classes())
+    dataplist = list(onto.data_properties())
+    objectplist = list(onto.object_properties())
+    classlist = [str(i) for i in clist]
+    datapropertylist = [str(i) for i in dataplist]
+    objectpropertylist = [str(i) for i in objectplist]
+    classlistprc = [re.split('[.]', w)[-1] for w in classlist]
+    datapropertylistprc = [re.split('[.]', w)[-1] for w in datapropertylist]
+    objectpropertylistprc = [re.split('[.]', w)[-1] for w in objectpropertylist]
+    finalclasslist = list(dict.fromkeys(classlistprc))
+    finaldatapropertylist = list(dict.fromkeys(datapropertylistprc))
+    finalobjectpropertylist = list(dict.fromkeys(objectpropertylistprc))
+    return sorted(finalclasslist), sorted(finaldatapropertylist), sorted(finalobjectpropertylist)
 
 
 def readTurtle(filepath, filename):
