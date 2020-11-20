@@ -8,6 +8,8 @@ services:
         dockerfile: Dockerfile
       network_mode: bridge
       restart: always
+      volumes:
+        - ./logs/nginx:/var/log/nginx
       ports:
         - "80:80"
       command: ["nginx", "-g", "daemon off;"]

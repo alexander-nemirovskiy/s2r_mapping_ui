@@ -6,7 +6,6 @@ from typing import List, Any, Union
 import pandas as pd
 import xmlschema
 from builtins import str
-
 from pandas import DataFrame
 
 from .MatchVocab import get_vocab_list, matchCompoundToVocab
@@ -86,36 +85,54 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
 
     scoresc = []
     if len(scoresc) == 0:
-        scoresc: List[List[Union[int, Any]]] = [[finalpairOriginThreshc[0][0], finalpairOriginThreshc[0][2], 0]]
+        scoresc: List[List[Union[int, Any]]] = [[finalpairOriginThreshc[0][0], finalpairOriginThreshc[0][2], 0, 0]]
     for inner in finalpairOriginThreshc:
         descisionc, indexc = isMatchExistscomp(inner[0], inner[2], scoresc)
         if descisionc:
-            scoresc[indexc][2] = scoresc[indexc][2] + 1
+            scoresc[indexc][2] = scoresc[indexc][2] + inner[4]
+            scoresc[indexc][3] = scoresc[indexc][3] + 1
         else:
-            tmplist = [inner[0], inner[2], 1]
+            tmplist = [inner[0], inner[2], inner[4], 1]
             scoresc.append(tmplist)
+    avgscoreClass = []
+    for i in scoresc:
+        newscore = i[2] / i[3]
+        templ = [i[0], i[1], newscore]
+        avgscoreClass.append(templ)
 
     scoresd = []
     if len(scoresd) == 0:
-        scoresd: List[List[Union[int, Any]]] = [[finalpairOriginThreshd[0][0], finalpairOriginThreshd[0][2], 0]]
+        scoresd: List[List[Union[int, Any]]] = [[finalpairOriginThreshd[0][0], finalpairOriginThreshd[0][2], 0, 0]]
     for inner in finalpairOriginThreshd:
         descisiond, indexd = isMatchExistscomp(inner[0], inner[2], scoresd)
         if descisiond:
-            scoresd[indexd][2] = scoresd[indexd][2] + 1
+            scoresd[indexd][2] = scoresd[indexd][2] + inner[4]
+            scoresd[indexd][3] = scoresd[indexd][3] + 1
         else:
-            tmplist = [inner[0], inner[2], 1]
+            tmplist = [inner[0], inner[2], inner[4], 1]
             scoresd.append(tmplist)
+    avgscoreData = []
+    for i in scoresd:
+        newscore = i[2] / i[3]
+        templ = [i[0], i[1], newscore]
+        avgscoreData.append(templ)
 
     scoreso = []
     if len(scoreso) == 0:
-        scoreso: List[List[Union[int, Any]]] = [[finalpairOriginThresho[0][0], finalpairOriginThresho[0][2], 0]]
+        scoreso: List[List[Union[int, Any]]] = [[finalpairOriginThresho[0][0], finalpairOriginThresho[0][2], 0, 0]]
     for inner in finalpairOriginThresho:
         descisiono, indexo = isMatchExistscomp(inner[0], inner[2], scoreso)
         if descisiono:
-            scoreso[indexo][2] = scoreso[indexo][2] + 1
+            scoreso[indexo][2] = scoreso[indexo][2] + inner[4]
+            scoreso[indexo][3] = scoreso[indexo][3] + 1
         else:
-            tmplist = [inner[0], inner[2], 1]
+            tmplist = [inner[0], inner[2], inner[4], 1]
             scoreso.append(tmplist)
+    avgscoreObject = []
+    for i in scoreso:
+        newscore = i[2] / i[3]
+        templ = [i[0], i[1], newscore]
+        avgscoreObject.append(templ)
 
     logger.info("\n\n\nStep 8: \nFiltered threshold on vector value")
 
@@ -152,9 +169,9 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
 
     logger.info("\n\n\nStep 10: \n Maintaining Original Terms")
 
-    classMatchList, originalclasslist = cleanInput(scoresc)
-    objectMatchList, originalobjectlist = cleanInput(scoreso)
-    dataMatchList, originaldatalist = cleanInput(scoresd)
+    classMatchList, originalclasslist = cleanInput(avgscoreClass)
+    objectMatchList, originalobjectlist = cleanInput(avgscoreObject)
+    dataMatchList, originaldatalist = cleanInput(avgscoreData)
 
     # getting original Classmapping list from joint and original lists terms
     for i in classMatchList:
@@ -208,7 +225,6 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
     logger.info("\n\n\nStep 11: \n  Getting Properties if Domain And Range Matches")
     # getting Properties if domian and ranges match
     tmpprop = []
-    originalprop = []
     for i in classMatchList:
         sourceMatchList, targetMatchList, = getClassMatchIndexList(xsdTupleList, owlObjectTupleList, i)
         if len(sourceMatchList) > 0 and len(targetMatchList) > 0:
@@ -225,7 +241,7 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
                     indtarget = getIndex(jointTargetList, i[1])
                     tmpprop[tmpprop.index(i)][1] = originalOwlList[indtarget]
     for i in tmpprop:
-        i.append(2)
+        i.append(1)
 
     logger.info("\n\n\nStep 12: \n Getting Domain if Properties And Range Matches")
     # getting domains if properties and ranges match
@@ -246,7 +262,7 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
                     indtarget = getIndex(jointTargetList, i[1])
                     tmpdm[tmpdm.index(i)][1] = originalOwlList[indtarget]
     for i in tmpdm:
-        i.append(2)
+        i.append(1)
 
     # getting ranges if properties and domain match
     logger.info("\n\n\nStep 13: \n Getting Ranges if Properties And Domain Matches")
@@ -267,7 +283,7 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
                     indtarget = getIndex(jointTargetList, i[1])
                     tmprg[tmprg.index(i)][1] = originalOwlList[indtarget]
     for i in tmprg:
-        i.append(2)
+        i.append(1)
 
     logger.info("\n\n\nStep 14:Getting Domain and Range if Properties  Matches")
     # getting domian and Range if Property Matches
@@ -285,7 +301,7 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
             removeDuplicate = list(set(map(lambda i: tuple(i), tmpdmrg)))
             dmrgoutput = [list(i) for i in removeDuplicate]
     for i in dmrgoutput:
-        i.append(1)
+        i.append(0.3)
 
     finallist = tmpprop + tmpdm + tmprg + dmrgoutput + classMatchList + dataMatchList + objectMatchList
     df = pd.DataFrame(finallist, columns=['source_term', 'mapped_term', 'confidence_score'])
