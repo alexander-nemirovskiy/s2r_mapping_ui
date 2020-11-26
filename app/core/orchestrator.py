@@ -111,7 +111,7 @@ async def generate_mapping_pairs(source_file: Path, target_file: Path) -> Tuple[
         # logger.info('Cleaning process done!')
         # df.to_csv(filename_location.joinpath(CLEANED_FILE + filename_uuid + '.csv'))
     faulthandler.disable()
-
+    df['confidence_score'] = df['confidence_score'].apply(lambda x: x * 100)
     sorted_group = df.sort_values('confidence_score', ascending=False).groupby('source_term', as_index=False)\
         [['mapped_term', 'confidence_score']].agg(lambda x: list(x))
     return filename_uuid, sorted_group

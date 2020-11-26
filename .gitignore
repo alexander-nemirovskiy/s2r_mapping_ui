@@ -222,6 +222,8 @@ dmypy.json
 
 
 /frontend/angularUI/.vscode/
-/backend/output
-/backend/uploads
 jaxb_impl/src/main/resources/
+input/*
+output/*
+uploads/*
+s2r_venv/*
