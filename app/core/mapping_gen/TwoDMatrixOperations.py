@@ -42,6 +42,26 @@ def splitToList(inputList):
     return final_list
 
 
+def getMaxScoreNelements(inputMatchList, sourceList,number):
+    finalList=[]
+    for searchEl in sourceList:
+        tmpl=[]
+        for i in inputMatchList:
+            if i[0]== searchEl:
+                tmpl.append(i)
+        sortedlist = sorted(tmpl, key=lambda tmpl: tmpl[2], reverse=True)
+        finalList.extend(sortedlist[:number])
+    return finalList
+
+def matchPair(val0, val1, scorelist):
+    index=-1
+    for s in scorelist:
+        if(s[0]==val0 and s[1]==val1):
+            return True, index
+    return False, -1
+
+
+
 def readFile(path, filename):
     owl = 'owl'
     xsd = 'xsd'
