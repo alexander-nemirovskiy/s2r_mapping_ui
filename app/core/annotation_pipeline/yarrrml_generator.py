@@ -253,17 +253,17 @@ def YARRRML_mapper(xsd_file_path, xsd_file_name, selector_df, conversion_type, Y
 
 
 
-# --------- Directories and file names--------------
-xsd_file_path = "G:\\OneDrive - Politecnico di Milano\\DEIB\\SPRINT\\SMART_ALI\\RML_decl\\input"
-xsd_file_name = "Common.xsd"
-selector_csv_location = "G:\\OneDrive - Politecnico di Milano\\DEIB\\SPRINT\\SMART_ALI\\RML_decl\\input"
-selector_csv_name = "selector_e53a69e9.csv"
-conversion_type = "xml2ttl"
-# "ttl2xml" or "xml2ttl"
-# The path to the output of the .yml file
-YARRRML_output = "G:\\OneDrive - Politecnico di Milano\\DEIB\\SPRINT\\SMART_ALI\\RML_decl\\output\\YARRRML\\"
-# -------------------------------------------------------
-
-# Function Call
-YARRRML_mapper(xsd_file_path, xsd_file_name, selector_csv_location, selector_csv_name,
-                   conversion_type, YARRRML_output)
+# # --------- Directories and file names--------------
+# xsd_file_path = "G:\\OneDrive - Politecnico di Milano\\DEIB\\SPRINT\\SMART_ALI\\RML_decl\\input"
+# xsd_file_name = "Common.xsd"
+# selector_csv_location = "G:\\OneDrive - Politecnico di Milano\\DEIB\\SPRINT\\SMART_ALI\\RML_decl\\input"
+# selector_csv_name = "selector_e53a69e9.csv"
+# conversion_type = "xml2ttl"
+# # "ttl2xml" or "xml2ttl"
+# # The path to the output of the .yml file
+# YARRRML_output = "G:\\OneDrive - Politecnico di Milano\\DEIB\\SPRINT\\SMART_ALI\\RML_decl\\output\\YARRRML\\"
+# # -------------------------------------------------------
+#
+# # Function Call
+# YARRRML_mapper(xsd_file_path, xsd_file_name, selector_csv_location, selector_csv_name,
+#                    conversion_type, YARRRML_output)

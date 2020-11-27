@@ -9,6 +9,7 @@ export class MappingPair {
 export class ChosenFiles {
     constructor (
         public sourceName: string,
-        public targetName: string
+        public targetName: string,
+        public annotationType: string
     ){}
 }

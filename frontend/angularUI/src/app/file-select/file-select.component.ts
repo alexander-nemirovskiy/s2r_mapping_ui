@@ -22,10 +22,13 @@ export class FileSelectComponent implements OnInit {
     @ViewChild('stepper') stepper;
     @ViewChild('source_file_select') source_file_select;
     @ViewChild('target_file_select') target_file_select;
+    @ViewChild('annotation_select') annotation_select;
+
 
     public optionalFormGroup: FormGroup;
     public sourceFormGroup: FormGroup;
     public targetFormGroup: FormGroup;
+    public annotationFormGroup: FormGroup;
     public selected_file: string
     public isOptional = true;
     
@@ -48,6 +51,9 @@ export class FileSelectComponent implements OnInit {
         this.targetFormGroup = this._formBuilder.group({
             targetFileControl: ['', Validators.required]
         });
+        this.annotationFormGroup = this._formBuilder.group({
+            annotationControl: ['', Validators.required]
+        });
     }
 
     selectionChange($event){
@@ -60,6 +66,8 @@ export class FileSelectComponent implements OnInit {
     }
 
     startMapping(){
+        let annotation_type = this.annotationFormGroup.value.annotationControl;
+        this.logger.warn(`Annotation: ${annotation_type}`)
         if (!this.sourceFormGroup.valid || !this.targetFormGroup.valid){
             this.logger.error('File form not valid!');
             return;
@@ -67,9 +75,10 @@ export class FileSelectComponent implements OnInit {
         else {
             let source = this.sourceFormGroup.value.sourceFileControl;
             let target = this.targetFormGroup.value.targetFileControl;
+            let annotation_type = this.annotationFormGroup.value.annotationControl;
             this.logger.log('Invoking mapping notification');
             this.resetForm();
-            this.notifier.notify(source, target);
+            this.notifier.notify(source, target, annotation_type);
         }
     }
 

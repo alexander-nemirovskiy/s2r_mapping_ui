@@ -17,16 +17,16 @@ app = FastAPI(title=PROJECT_NAME,
               description='S.M.A.R.T. Software. Sprint mapping and annotation recommendation tool')
 
 # Todo change for production
-# if ALLOWED_HOSTS:
-#     ALLOWED_HOSTS = ["*"]
-#
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=ALLOWED_HOSTS,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+if ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_HOSTS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.add_exception_handler(API_Exception, http_error_handler)
 app.include_router(api_router, prefix=API_V1_STR)

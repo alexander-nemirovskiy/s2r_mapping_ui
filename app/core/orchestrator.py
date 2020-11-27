@@ -110,10 +110,11 @@ class Orchestrator:
         settings = config[MAPPING_SEC]
         input_location = Path.cwd().joinpath(INPUT_FOLDER, file_id)
         selector_df: DataFrame = selector(automatic, cleaner_df, folder, output_name)
+        final_output_dir = folder.joinpath(ANNOTATED_FOLDER)
+        if not final_output_dir.is_dir():
+            final_output_dir.mkdir(parents=True)
         try:
             if settings[ANNOTATION_KEY] == 'java':
-                final_output_dir = folder.joinpath(ANNOTATED_FOLDER)
-                final_output_dir.mkdir(parents=True)
                 await Orchestrator.process_xsd_file(file_id)
                 logger.info('Created xsd task')
                 type_identifier_to_java_annotator(
@@ -130,7 +131,7 @@ class Orchestrator:
                     user_specified_conversion_type=settings[CONVERSION_KEY]
                 )
             else:
-                YARRRML_mapper(input_location, SOURCE_FILE, selector_df, settings[CONVERSION_KEY], folder)
+                YARRRML_mapper(input_location, SOURCE_FILE, selector_df, settings[CONVERSION_KEY], final_output_dir)
         except Exception as e:
             logger.error(f'Annotation process failed for {file_id} due to exception:\t{e}')
             raise API_Exception(ErrorCode.GENERIC, 'Annotation process failed')
@@ -141,11 +142,14 @@ class Orchestrator:
         created_filename = MAPPING_OUTPUT_FILE + filename_uuid + '.csv'
         output_location = Path.cwd().joinpath(OUTPUT_FOLDER, filename_uuid)
         input_location = Path.cwd().joinpath(INPUT_FOLDER, filename_uuid)
+        final_output_dir = output_location.joinpath(ANNOTATED_FOLDER)
 
         if not output_location.is_dir():
             output_location.mkdir(parents=True)
         if not input_location.is_dir():
             input_location.mkdir(parents=True)
+        if not final_output_dir.is_dir():
+            final_output_dir.mkdir(parents=True)
 
         if not (check_allowed_extensions({source_file.suffix}, ALLOWED_INPUT_EXTENSIONS) and
                 check_allowed_extensions({target_file.suffix}, ALLOWED_ONTOLOGY_EXTENSIONS)):
@@ -184,7 +188,7 @@ class Orchestrator:
             base_name=location
         )
         logger.info(f'Zipping for {file_id} done!')
-        return user_folder.joinpath(ANNOTATED_FOLDER, '.zip')
+        return user_folder.joinpath(ANNOTATED_FOLDER + '.zip')
 
 
 
