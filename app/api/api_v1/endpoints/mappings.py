@@ -7,10 +7,10 @@ from pandas import DataFrame
 from starlette import status
 
 from ....core.commons import ErrorCode, OkResponse, MappingPairsResponse, MappingPairsRequest, extract_pair
-from ....core.orchestrator import generate_mapping_pairs, generate_annotations, get_zip_location
+from ....core.orchestrator import Orchestrator
 from ....utils.file_management import save_upload_file, retrieve_upload_files_by_extension, \
     retrieve_upload_file_by_filename, check_allowed_extensions
-from ....app_settings import ALLOWED_INPUT_EXTENSIONS, ALLOWED_ONTOLOGY_EXTENSIONS
+from ....app_settings import ALLOWED_INPUT_EXTENSIONS, ALLOWED_ONTOLOGY_EXTENSIONS, ANNOTATION_TYPES
 
 router = APIRouter()
 
@@ -65,7 +65,7 @@ async def get_annotated_file_zip(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=ErrorCode.MISSING_PARAMS,
         )
-    location = await get_zip_location(filename)
+    location = await Orchestrator.get_zip_location(filename)
     # may also be application/blob
     return FileResponse(str(location), media_type='application/zip')
 
@@ -73,7 +73,8 @@ async def get_annotated_file_zip(
 @router.get("/mapping", response_model=MappingPairsResponse)
 async def generate_mapping(
         source_filename: str,
-        target_filename: str
+        target_filename: str,
+        annotation_type: str
 ):
     """Generates mapping pairs suggestions from an ontology and an input structured file.
 
@@ -110,7 +111,7 @@ async def generate_mapping(
 
     options: `dict` [`int`, `list` [`str`]]
         qwe
-    
+
     scores: `dict` [`int`, `list` [`int`]]
 
     Raises
@@ -132,13 +133,16 @@ async def generate_mapping(
     else:
         source_file = retrieve_upload_file_by_filename(source_filename)
         target_file = retrieve_upload_file_by_filename(target_filename)
-        if not (source_file and target_file):
+        if not (source_file and target_file) or annotation_type not in ANNOTATION_TYPES:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=ErrorCode.GENERIC,
             )
         else:
-            name_id, pairs = await generate_mapping_pairs(source_file, target_file)
+            filename_uuid, created_filename, filename_location = await Orchestrator.prepare_host_structure(source_file,
+                                                                                                           target_file,
+                                                                                                           annotation_type)
+            name_id, pairs = await Orchestrator.generate_mapping_pairs(filename_uuid, source_file, target_file)
             # TODO check for breaking code
             pairs = pairs.to_dict()
             return MappingPairsResponse(file_id=name_id, terms=pairs['source_term'], options=pairs['mapped_term'],
@@ -148,7 +152,8 @@ async def generate_mapping(
 @router.get("/mapping/autoselect", response_model=OkResponse)
 async def autogenerate_mapping(
         source_filename: str,
-        target_filename: str
+        target_filename: str,
+        annotation_type: str
 ):
     """Generates annotated Java files from an ontology and an input structured file using best-match pairing to select
     pairs
@@ -179,6 +184,12 @@ async def autogenerate_mapping(
        - owl
        - ttl
 
+    annotation_type : `str`
+        Allowed extensions for target file
+       - java
+       - yarrml
+
+
     Returns
     -------
     file_id: `str`
@@ -201,6 +212,7 @@ async def autogenerate_mapping(
     `API_Exception`:
        Raised if something happens during the mapping process. Check `detail` message to gather
        additional information about what happened.
+
     """
 
     if not (source_filename and target_filename):
@@ -211,16 +223,19 @@ async def autogenerate_mapping(
     else:
         source_file = retrieve_upload_file_by_filename(source_filename)
         target_file = retrieve_upload_file_by_filename(target_filename)
-        if not (source_file and target_file):
+        if not (source_file and target_file) or annotation_type not in ANNOTATION_TYPES:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail=ErrorCode.GENERIC,
             )
         else:
-            name_id, pairs_df = await generate_mapping_pairs(source_file, target_file)
+            file_id, created_file, file_location = await Orchestrator.prepare_host_structure(source_file,
+                                                                                             target_file,
+                                                                                             annotation_type)
+            name_id, pairs_df = await Orchestrator.generate_mapping_pairs(file_id, source_file, target_file)
             pairs_df['confidence_score'] = [cs[0] for cs in pairs_df['confidence_score']]
             pairs_df['mapped_term'] = [mt[0] for mt in pairs_df['mapped_term']]
-            await generate_annotations(pairs_df, automatic=True, file_id=name_id)
+            await Orchestrator.generate_annotations(pairs_df, automatic=True, file_id=name_id)
             return {'task_completed': True, 'message': f'{name_id}'}
 
 
@@ -236,5 +251,5 @@ async def confirm_mappings(
     else:
         val = list(map(extract_pair, confirmedPairs.pairs))
         cleaned_df = DataFrame(val, columns=['source_term', 'mapped_term', 'confidence_score'])
-        await generate_annotations(cleaned_df, False, confirmedPairs.file_id)
+        await Orchestrator.generate_annotations(cleaned_df, False, confirmedPairs.file_id)
         return {'task_completed': True, 'message': 'mapping completed'}

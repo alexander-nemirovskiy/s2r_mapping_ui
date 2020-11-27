@@ -10,8 +10,7 @@ import os
 # ******************************************************* #
 # ****************** YARRRML Functions ****************** #
 # ******************************************************* #
-def YARRRML_mapper(xsd_file_path, xsd_file_name, selector_csv_location, selector_csv_name,
-                   conversion_type, YARRRML_output):
+def YARRRML_mapper(xsd_file_path, xsd_file_name, selector_df, conversion_type, YARRRML_output):
 
     """ The main function which takes as input the XSD and the selected mappings files
     and as the output generates the YARRRML decelerations """
@@ -146,10 +145,10 @@ def YARRRML_mapper(xsd_file_path, xsd_file_name, selector_csv_location, selector
     classes_list, properties_list = class_property_extractor(xsd_file_path, xsd_file_name)
 
     # Building the selected csv file path
-    selector_csv = Path.cwd().joinpath(selector_csv_location, selector_csv_name)
+    # selector_csv = Path.cwd().joinpath(selector_csv_location, selector_csv_name)
 
     # Read csv
-    selector_df = pd.read_csv(selector_csv)
+    # selector_df = pd.read_csv(selector_csv)
 
     # Determining the column of each xsd and ontology file
     if conversion_type == "xml2ttl":

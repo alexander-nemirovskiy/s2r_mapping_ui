@@ -9,14 +9,15 @@ from .functions import ontology_graph_loader
 
 
 def term_type_identifier(inputs_directory, input_ttl_name,
-                         outputs_directory, ttl_term_type_csv_name,
-                         note_file_name):
+                         outputs_directory, ttl_term_type_csv_path,
+                         note_file_path):
     """ Function to identify the type of the terms """
 
     # * Directories
     input_ttl_location = os.path.join(inputs_directory, input_ttl_name)
-    ttl_term_type_csv_location = os.path.join(outputs_directory, ttl_term_type_csv_name)
-    notes_location = os.path.join(outputs_directory, note_file_name)
+    # ttl_term_type_csv_location = os.path.join(outputs_directory, ttl_term_type_csv_path)
+    ttl_term_type_csv_location = ttl_term_type_csv_path
+    notes_location = note_file_path
 
     # Step1:
     # Loading the ontology file (in any format) into a graph
@@ -43,7 +44,7 @@ def term_type_identifier(inputs_directory, input_ttl_name,
 def annotation_finder(outputs_directory, selected_csv_name,
                       inputs_directory, input_xml_name,
                       input_ttl_name, annotated_csv_name,
-                      ttl_term_type_csv_name, user_specified_conversion_type):
+                      ttl_term_type_csv_path, user_specified_conversion_type):
     """ Function to find the annotations"""
 
     # * Directories
@@ -51,7 +52,7 @@ def annotation_finder(outputs_directory, selected_csv_name,
     input_xml_location = os.path.join(inputs_directory, input_xml_name)
     input_ttl_location = os.path.join(inputs_directory, input_ttl_name)
     annotated_csv_location = os.path.join(outputs_directory, annotated_csv_name)
-    ttl_term_type_csv_location = os.path.join(outputs_directory, ttl_term_type_csv_name)
+    ttl_term_type_csv_location = os.path.join(outputs_directory, ttl_term_type_csv_path)
 
     # Read the csv file which contains the selected mappings
     input_csv_file = pd.read_csv(selected_csv_location)
@@ -103,8 +104,8 @@ def java_annotator(outputs_directory, annotated_csv_name,
 
 
 def type_identifier_to_java_annotator(inputs_directory, input_ttl_name,
-                                      outputs_directory, ttl_term_type_csv_name,
-                                      note_file_name, selected_csv_name,
+                                      outputs_directory, ttl_term_type_csv_path,
+                                      note_file_path, selected_csv_name,
                                       input_xml_name, annotated_csv_name,
                                       java_files_directory,
                                       final_java_files_directory,
@@ -114,14 +115,14 @@ def type_identifier_to_java_annotator(inputs_directory, input_ttl_name,
     """ --------------------------- ttl terms type identification --------------------------- """
 
     term_type_identifier(inputs_directory=inputs_directory, input_ttl_name=input_ttl_name,
-                         outputs_directory=outputs_directory, ttl_term_type_csv_name=ttl_term_type_csv_name,
-                         note_file_name=note_file_name)
+                         outputs_directory=outputs_directory, ttl_term_type_csv_path=ttl_term_type_csv_path,
+                         note_file_path=note_file_path)
 
     """ --------------------------- Finding the annotations --------------------------- """
     annotation_finder(outputs_directory=outputs_directory, selected_csv_name=selected_csv_name,
                       inputs_directory=inputs_directory, input_xml_name=input_xml_name,
                       input_ttl_name=input_ttl_name, annotated_csv_name=annotated_csv_name,
-                      ttl_term_type_csv_name=ttl_term_type_csv_name,
+                      ttl_term_type_csv_path=ttl_term_type_csv_path,
                       user_specified_conversion_type=user_specified_conversion_type)
 
     """ --------------------------- Java Files Annotating --------------------------- """
