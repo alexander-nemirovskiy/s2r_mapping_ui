@@ -11,7 +11,6 @@ logging.basicConfig(
     level=logging.DEBUG, format="%(asctime)s %(thread)s %(funcName)s %(message)s"
 )
 
-
 app = FastAPI(title=PROJECT_NAME,
               version='1.0.1',
               description='S.M.A.R.T. Software. Sprint mapping and annotation recommendation tool')

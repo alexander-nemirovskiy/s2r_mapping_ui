@@ -1,6 +1,8 @@
 import asyncio
 import faulthandler
+import time
 import logging
+from logging.handlers import RotatingFileHandler
 from shutil import copyfile, make_archive
 from concurrent.futures.process import ProcessPoolExecutor
 from pathlib import Path
@@ -22,6 +24,12 @@ from ..app_settings import OUTPUT_FOLDER, INPUT_FOLDER, MAPPING_FOLDER, SELECTOR
 from ..utils.file_management import check_allowed_extensions
 
 logger = logging.getLogger('core-executor')
+performance_logger = logging.getLogger('orchestrator')
+FORMATTER = logging.Formatter("%(asctime)s, %(thread)s, %(funcName)s, %(message)s")
+handler = RotatingFileHandler(str(Path.cwd().joinpath(OUTPUT_FOLDER, 'orchestrator.log')), maxBytes=2000, backupCount=1)
+handler.setFormatter(FORMATTER)
+handler.setLevel(logging.DEBUG)
+performance_logger.addHandler(handler)
 
 
 class Orchestrator:
@@ -76,7 +84,7 @@ class Orchestrator:
         """
 
         faulthandler.enable()
-
+        start_time = time.perf_counter()
         df = None
         try:
             loop = asyncio.get_running_loop()
@@ -94,9 +102,13 @@ class Orchestrator:
             logger.warning('Mapping process terminated with an error. Please check')
             raise API_Exception(ErrorCode.GENERIC, 'Mapping pairs file not created')
         faulthandler.disable()
+        mapping_time = time.perf_counter()
         df['confidence_score'] = df['confidence_score'].apply(lambda x: x * 100)
         sorted_group = df.sort_values('confidence_score', ascending=False).groupby('source_term', as_index=False)\
             [['mapped_term', 'confidence_score']].agg(lambda x: list(x))
+        end_time = time.perf_counter()
+        log_entry = f"{filename_uuid}, source [{source_file.name}], target [{target_file.name}], mapping_time [{mapping_time - start_time}], sorting_time [{end_time - mapping_time}], exe_time [{end_time - start_time}]"
+        performance_logger.info(log_entry)
         return filename_uuid, sorted_group
 
     @staticmethod
@@ -105,18 +117,23 @@ class Orchestrator:
         folder = Path.cwd().joinpath(OUTPUT_FOLDER, file_id)
         if not folder.is_dir():
             raise Exception(f'Output folder for {file_id} is missing in annotation step.')
+        start_time = time.perf_counter()
         config = configparser.ConfigParser()
         config.read(folder.joinpath(SETTINGS_FILE))
         settings = config[MAPPING_SEC]
         input_location = Path.cwd().joinpath(INPUT_FOLDER, file_id)
         selector_df: DataFrame = selector(automatic, cleaner_df, folder, output_name)
+        selector_time = time.perf_counter()
         final_output_dir = folder.joinpath(ANNOTATED_FOLDER)
         if not final_output_dir.is_dir():
             final_output_dir.mkdir(parents=True)
         try:
+            intermediate_log = f"{file_id}, selector_time [{selector_time - start_time}], process [{settings[ANNOTATION_KEY]}]"
             if settings[ANNOTATION_KEY] == 'java':
+                xsd_processing = time.perf_counter()
                 await Orchestrator.process_xsd_file(file_id)
                 logger.info('Created xsd task')
+                annotation_start = time.perf_counter()
                 type_identifier_to_java_annotator(
                     inputs_directory=input_location,
                     input_ttl_name=TARGET_FILE,
@@ -130,8 +147,13 @@ class Orchestrator:
                     final_java_files_directory=final_output_dir,
                     user_specified_conversion_type=settings[CONVERSION_KEY]
                 )
+                annotation_end = time.perf_counter()
+                intermediate_log += f", jaxb_exe [{annotation_start - xsd_processing}], annotation_exe [{annotation_end - annotation_start}]"
             else:
+                yarrrml_start = time.perf_counter()
                 YARRRML_mapper(input_location, SOURCE_FILE, selector_df, settings[CONVERSION_KEY], final_output_dir)
+                intermediate_log += f", yml_exe [{time.perf_counter() - yarrrml_start}]"
+            performance_logger.info(intermediate_log)
         except Exception as e:
             logger.error(f'Annotation process failed for {file_id} due to exception:\t{e}')
             raise API_Exception(ErrorCode.GENERIC, 'Annotation process failed')

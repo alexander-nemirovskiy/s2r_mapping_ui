@@ -23,7 +23,7 @@ EXT_MODEL_NAME = 'model.bin'
 ALLOWED_INPUT_EXTENSIONS = {'.xml', '.xsd'}
 ALLOWED_ONTOLOGY_EXTENSIONS = {'.ttl', '.owl'}
 
-ANNOTATION_TYPES = {'java', 'yarrml'}
+ANNOTATION_TYPES = {'java', 'yarrrml'}
 
 
 # * Other Variables

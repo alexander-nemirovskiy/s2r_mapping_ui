@@ -324,7 +324,7 @@ def WordMatchComp(sourcefile: str, targetfile: str, model, vocab_list, unique_fi
     finalPairList = getMaxScoreNelements(finallist, finalUniqueElements, 3)
     df = pd.DataFrame(finalPairList, columns=['source_term', 'mapped_term', 'confidence_score'])
     output_file = MAPPING_OUTPUT_FILE + unique_file_id + '.csv'
-    df.to_csv(str(out_folder.joinpath(output_file)), index=True)
+    df.to_csv(str(out_folder.joinpath(unique_file_id, output_file)), index=True)
     logger.info("------------------------- Mapping generation ended. ----------------------------")
     return df
 
@@ -339,10 +339,8 @@ def start_mapping(source_file: Path, target_file: Path, filename_uuid: str) -> D
             logger.info('Entered mapping lock')
             logger.info('Loading model and extracting vocabulary list')
             model, vocab_list = get_vocab_list(str(model_location))
-            start_time = time()
             logger.info('Starting word matching algorithm')
             df = WordMatchComp(source_file.name, target_file.name, model, vocab_list, filename_uuid)
-            logger.info("Mapping procedure completed in: %s seconds" % (time() - start_time))
         return df
     except Exception as e:
         logger.error(f'Something went wrong during mapping procedure\n{e} - {str(e)}')
