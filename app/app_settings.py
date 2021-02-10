@@ -14,6 +14,7 @@ UPLOAD_FOLDER = 'uploads'
 INPUT_FOLDER = 'input'
 MAPPING_FOLDER = 'mapping'
 SELECTOR_FOLDER = 'selector'
+ANNOTATED_FOLDER = 'final_output'
 
 # external model location
 # EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'
@@ -21,6 +22,8 @@ EXT_MODEL_NAME = 'model.bin'
 
 ALLOWED_INPUT_EXTENSIONS = {'.xml', '.xsd'}
 ALLOWED_ONTOLOGY_EXTENSIONS = {'.ttl', '.owl'}
+
+ANNOTATION_TYPES = {'java', 'yarrrml'}
 
 
 # * Other Variables
@@ -39,6 +42,7 @@ writepathCompoundc= 'Sumst_MatchCountc'
 writepathCompoundd= 'Sumst_MatchCountd'
 writepathCompoundo= 'Sumst_MatchCounto'
 
+
 MAPPING_OUTPUT_FILE = 'mapping_results_'
 CLEANED_FILE = 'cleaner_'
 SELECTOR_OUTPUT_FILE = 'selector_'
@@ -47,3 +51,9 @@ TARGET_FILE = 'target'
 JAR_INPUT_PARAM = '-input'
 JAR_OUTPUT_PARAM = '-folder'
 JAR_NAME = 'jaxb_impl-0.1.3.jar'
+
+# settings file
+SETTINGS_FILE = 'settings'
+MAPPING_SEC = 'MAPPING'
+ANNOTATION_KEY = 'annotation_type'
+CONVERSION_KEY = 'conversion_type'

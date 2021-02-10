@@ -19,10 +19,11 @@ export class MappingService {
 
     constructor(private http: HttpClient, private logger: LoggerService) {}
 
-    startMapping(sourceName: string, targetName: string): Observable<MappingPair[]> {
+    startMapping(sourceName: string, targetName: string, annotation_type: string): Observable<MappingPair[]> {
         const param = {
             'source_filename': sourceName,
-            'target_filename': targetName
+            'target_filename': targetName,
+            'annotation_type': annotation_type
         }
         return this.http.get<object>(mappingURL, { params: param })
             .pipe(

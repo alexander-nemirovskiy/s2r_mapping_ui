@@ -43,6 +43,20 @@
             </div>
         </form>
     </mat-step>
+    <mat-step #annotation_select [stepControl]="annotationFormGroup" errorMessage="Annotation output not selected">
+        <form [formGroup]="annotationFormGroup">
+            <ng-template matStepLabel>Annotation type</ng-template>
+            <mat-label>Select output annotation format</mat-label>
+            <mat-radio-group name="annotation" class="flex-container column"
+            formControlName="annotationControl" required>
+                <mat-radio-button value="java">Java classes</mat-radio-button>
+                <mat-radio-button value="yarrrml">YARRRML</mat-radio-button>
+            </mat-radio-group> 
+            <div>
+                <button mat-button matStepperNext>Next</button>
+            </div>
+        </form>
+    </mat-step>
     <mat-step>
         <ng-template matStepLabel>Generate mapping</ng-template>
         <p>Use selected file to start the mapping process</p>

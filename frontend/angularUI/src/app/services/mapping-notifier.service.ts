@@ -13,8 +13,8 @@ export class MappingNotifierService {
 
     constructor(private logger: LoggerService) { }
 
-    notify(sourceName: string, targetName: string){
-        this.logger.log(`Started mapping invocation using chosen files: \n${sourceName} - ${targetName}`);
-        this.subject$.next(new ChosenFiles(sourceName, targetName))
+    notify(sourceName: string, targetName: string, annotationType: string){
+        this.logger.log(`Started mapping invocation using chosen files: \n${sourceName} - ${targetName}\nannotation type:${annotationType}`);
+        this.subject$.next(new ChosenFiles(sourceName, targetName, annotationType))
     }
 }

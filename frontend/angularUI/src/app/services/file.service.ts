@@ -37,7 +37,7 @@ export class FileService {
                     }
                     return throwError(new APIError("500", null, null, "Unexpected server error"));
                 }),
-                map((data: string[]) => data)
+                // map((data: string[]) => data)
             );
     }
 

@@ -38,8 +38,8 @@ export class MappingContainerComponent implements OnInit, OnDestroy {
                     this.logger.log('Notification received');
                     this.localMappings = null;
                     this.resetErrorField();
-                    if (message && message.sourceName && message.targetName) {
-                        this.subs.add(this.mappingService.startMapping(message.sourceName, message.targetName)
+                    if (message && message.sourceName && message.targetName && message.annotationType) {
+                        this.subs.add(this.mappingService.startMapping(message.sourceName, message.targetName, message.annotationType)
                             .pipe(
                                 catchError(err => {
                                     this.logger.warn('Error received: propagating')
