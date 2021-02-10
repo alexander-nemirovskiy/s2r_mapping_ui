@@ -7,8 +7,7 @@ import { LoggerService } from './logger.service';
 import { environment } from './../../environments/environment';
 import { MappingPair } from '../models/MappingPair';
 import { APIError } from '../models/Errors';
-
-const mappingURL = environment.API_Endpoint + '/mapping';
+import { getBaseLocation } from './location-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +15,11 @@ const mappingURL = environment.API_Endpoint + '/mapping';
 export class MappingService {
     private confirmedPairsSub = new Subject<MappingPair>();
     public confirmedPairs$ = this.confirmedPairsSub.asObservable();
+    private readonly mappingsURL: string;
 
-    constructor(private http: HttpClient, private logger: LoggerService) {}
+    constructor(private http: HttpClient, private logger: LoggerService) {
+        this.mappingsURL = `${getBaseLocation()}${environment.apiPrefix}/mapping`;
+    }
 
     startMapping(sourceName: string, targetName: string, annotation_type: string): Observable<MappingPair[]> {
         const param = {
@@ -25,7 +27,7 @@ export class MappingService {
             'target_filename': targetName,
             'annotation_type': annotation_type
         }
-        return this.http.get<object>(mappingURL, { params: param })
+        return this.http.get<object>(this.mappingsURL, { params: param })
             .pipe(
                 tap(() => this.logger.log('Mapping done')),
                 catchError( err => {
@@ -77,7 +79,7 @@ export class MappingService {
                 'Content-Type': 'application/json' 
             }),
         };
-        return this.http.post(mappingURL + '/pairs', body)
+        return this.http.post(this.mappingsURL + '/pairs', body)
             .pipe(
                 tap(() => this.logger.log('Pairs confirmed')),
                 catchError( err => {
