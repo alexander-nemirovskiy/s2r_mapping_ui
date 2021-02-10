@@ -5,23 +5,29 @@ import { environment } from '../../environments/environment';
 import { LoggerService } from './logger.service';
 import { tap, catchError, map } from 'rxjs/operators';
 import { APIError } from '../models/Errors';
+import { getBaseLocation } from './location-handler';
 
-const uploadURL = environment.API_Endpoint + '/uploads'
-const filesURL = environment.API_Endpoint + '/files'
+// const uploadURL = environment.API_Endpoint + '/uploads'
+// const filesURL = environment.API_Endpoint + '/files'
 
 @Injectable({
     providedIn: 'root'
 })
 export class FileService {
+    private readonly uploadURL: string;
+    private readonly filesURL: string;
     
-    constructor(private http: HttpClient, private logger: LoggerService) {}
+    constructor(private http: HttpClient, private logger: LoggerService) {
+        this.uploadURL = `${getBaseLocation()}${environment.apiPrefix}/uploads`;
+        this.filesURL = `${getBaseLocation()}${environment.apiPrefix}/files`;
+    }
     
     getFiles(extensionFilter: string[] = []): Observable<string[]> {
         let param = {}
         if (extensionFilter){
             param = {'extensions': extensionFilter}
         }
-        return this.http.get<string[]>(filesURL, { params: param })
+        return this.http.get<string[]>(this.filesURL, { params: param })
             .pipe(
                 tap(() => this.logger.log('fetched files from server')),
                 catchError( err => {
@@ -50,7 +56,7 @@ export class FileService {
             const formData: FormData = new FormData();
             formData.append('file', file, file.name);
             
-            const req = new HttpRequest('POST', uploadURL, formData, {
+            const req = new HttpRequest('POST', this.uploadURL, formData, {
                 reportProgress: true
             });
             
@@ -78,7 +84,7 @@ export class FileService {
     }
 
     public download_annotated_files(file_id: string){
-        return this.http.get(filesURL + '/' + file_id, {
+        return this.http.get(this.filesURL + '/' + file_id, {
             responseType: 'arraybuffer'
           });
     }

@@ -1,19 +1,20 @@
 version: '3'
 services:
-  smart_ws:
-      container_name: smart_ws
-      image: smart_ws_img
-      hostname: smart_ws
+  nginx_ws:
+      container_name: smart_app
+      image: smart_app_img
+      hostname: smart_app
       build:
         context: ./frontend/angularUI
         dockerfile: Dockerfile
-      network_mode: bridge
       restart: unless-stopped
       volumes:
         - ./logs/nginx:/var/log/nginx
       ports:
         - "${NGINX_PORT}:80"
       command: ["nginx", "-g", "daemon off;"]
+      depends_on:
+        - smart_api
 
   smart_api:
     container_name: smart_api
@@ -27,6 +28,3 @@ services:
     - ./input:/smart/input
     - ./output:/smart/output
     - ./uploads:/smart/uploads
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8081"]
-    depends_on:
-      - nginx_ws
