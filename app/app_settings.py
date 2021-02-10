@@ -15,6 +15,7 @@ INPUT_FOLDER = 'input'
 MAPPING_FOLDER = 'mapping'
 SELECTOR_FOLDER = 'selector'
 ANNOTATED_FOLDER = 'final_output'
+LOG_FOLDER = 'logs'
 
 # external model location
 # EXT_MODEL_NAME = 'GoogleNews-vectors-negative300.bin'

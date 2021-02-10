@@ -8,7 +8,8 @@ WORKDIR /smart/
 RUN npm install && \
     npm install -g @angular/cli@9.1.12 && \
     npm install --save @angular/material @angular/cdk && \
-    npm install --save @angular/animations
+    npm install --save @angular/animations && \
+    npm audit fix
 
 COPY . /smart/
 RUN ng build --prod --build-optimizer=true --output-path=/smart/dist && \
